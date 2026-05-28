@@ -150,12 +150,12 @@ html,body{height:100%;font-family:'Epilogue',sans-serif;background:var(--void);c
       <div class="ai-avatar">✦</div>
       <div>
         <div class="ai-name">Glow AI</div>
-        <div class="ai-status">Online · Always here to help</div>
+        <div class="ai-status">Online · Here to assist you</div>
       </div>
     </div>
     <div class="header-right">
       <div class="ip-badge" id="ipBadge"><span class="ip-dot"></span><span id="ipText">Detecting...</span></div>
-      <button class="hbtn" onclick="resetChat()">New chat</button>
+      <button class="hbtn" onclick="resetChat()">Start new chat</button>
     </div>
   </div>
 
@@ -165,12 +165,12 @@ html,body{height:100%;font-family:'Epilogue',sans-serif;background:var(--void);c
   <!-- INPUT -->
   <div class="input-area">
     <div class="input-row">
-      <textarea class="chat-input" id="chatInput" placeholder="Ask me anything about Glow Up..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <textarea class="chat-input" id="chatInput" placeholder="How may I assist you today?" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
       <button class="send-btn" onclick="sendUserMsg()" aria-label="Send message">
         <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
-    <div class="input-hint">Powered by Glow Up AI · Your data is private and secure</div>
+    <div class="input-hint">Powered by Glow Up AI · Your privacy is fully protected</div>
   </div>
 
 </div>
@@ -222,9 +222,9 @@ function startGreeting(isNew) {
 
 function getGreetingMsg(isNew) {
   if (isNew) {
-    return `Hey there! 👋 Welcome to <strong>Glow Up</strong> — I'm <strong>Glow AI</strong>, your personal assistant.\n\nI noticed this is your first time here. I'm here to walk you through everything — what Glow Up is, how it works, and help you get registered in just a few minutes.\n\nWhat would you like to do first?`;
+    return `Good day, and a warm welcome to <strong>Glow Up</strong>! 👋 I'm <strong>Glow AI</strong>, your dedicated platform assistant.\n\nIt's wonderful to have you here. I'd be delighted to walk you through everything — what Glow Up offers, how it works, and how to get your account set up in just a few minutes.\n\nHow may I assist you today?`;
   }
-  return `Welcome back to <strong>Glow Up</strong>! 🌟 Great to see you again. I'm <strong>Glow AI</strong> — how can I help you today?`;
+  return `Welcome back to <strong>Glow Up</strong>! 🌟 It's a pleasure to see you again. I'm <strong>Glow AI</strong> — how may I assist you today?`;
 }
 
 function getGreetingReplies() {
@@ -241,7 +241,7 @@ function showNewVisitorBanner() {
   const wrap = document.getElementById('chatWrap');
   const banner = document.createElement('div');
   banner.className = 'visitor-banner';
-  banner.innerHTML = `<div class="vb-icon">🔍</div><div class="vb-text"><strong>New visitor detected</strong>I can see this is your first time on Glow Up. I'll give you a full walkthrough and help you get set up — it only takes 2 minutes!</div>`;
+  banner.innerHTML = `<div class="vb-icon">🔍</div><div class="vb-text"><strong>New visitor — welcome!</strong>It appears this is your first visit to Glow Up. I'd be happy to guide you through the platform and assist with your registration — it takes just 2 minutes.</div>`;
   wrap.appendChild(banner);
   wrap.scrollTop = wrap.scrollHeight;
 }
@@ -249,7 +249,7 @@ function showNewVisitorBanner() {
 // ── AI RESPONSES ──
 const RESPONSES = {
   "what is glow up": {
-    text: `<strong>Glow Up</strong> is a professional platform that connects <strong>creators & influencers</strong> with <strong>brands & businesses</strong> for paid content partnerships.\n\nThink of us as the smart middleman — we handle matching, contracts, payments, and everything in between so you can focus on creating.`,
+    text: `Thank you for asking. <strong>Glow Up</strong> is a professional marketplace that seamlessly connects <strong>creators and influencers</strong> with <strong>brands and business operators</strong> for paid content partnerships.\n\nWe serve as a trusted intermediary — managing the matching process, digital contracts, secure payments, and analytics, so that you can focus entirely on what you do best.`,
     card: {
       title: "Glow Up at a glance",
       rows: [
@@ -264,7 +264,7 @@ const RESPONSES = {
     replies: ["How do I earn money?", "Tell me about GLOW tokens", "What are the plans?", "Register me now"]
   },
   "creator": {
-    text: `As a <strong>creator on Glow Up</strong>, here's what you get:\n\n<strong>Your creator journey:</strong>`,
+    text: `We're delighted to have you consider joining as a <strong>creator on Glow Up</strong>. Here is a comprehensive overview of what the platform offers you:\n\n<strong>Your creator journey with Glow Up:</strong>`,
     features: [
       "Free signup — zero followers needed to start",
       "Build a professional portfolio with bio, media, rate card & niche tags",
@@ -278,7 +278,7 @@ const RESPONSES = {
     replies: ["What are the creator plans?", "How much can I earn?", "Register as a creator", "Tell me about GLOW tokens"]
   },
   "brand": {
-    text: `As a <strong>business or brand on Glow Up</strong>, here's your toolkit:\n\n<strong>What you get:</strong>`,
+    text: `Thank you for your interest in partnering with us as a <strong>business or brand on Glow Up</strong>. Here is a full overview of the professional tools and services available to you:\n\n<strong>Your business toolkit on Glow Up:</strong>`,
     features: [
       "Search & filter verified creators by niche, tier, engagement rate",
       "Send campaign offers with full brief, deliverables & compensation",
@@ -292,7 +292,7 @@ const RESPONSES = {
     replies: ["Business plan pricing", "How does escrow work?", "Register as a business", "What is the 16% commission?"]
   },
   "earn": {
-    text: `Here's exactly how <strong>creators earn money</strong> on Glow Up:`,
+    text: `Excellent question. Here is a clear and transparent breakdown of how <strong>creators generate income</strong> through Glow Up:`,
     card: {
       title: "Creator earnings breakdown",
       rows: [
@@ -307,7 +307,7 @@ const RESPONSES = {
     replies: ["What are the creator plans?", "Register as a creator", "Tell me about GLOW tokens"]
   },
   "glow": {
-    text: `<strong>GLOW</strong> is Glow Up's native utility token — here's how it works:`,
+    text: `Certainly — the <strong>GLOW Token</strong> is Glow Up's native utility token, and it plays a central role in our platform economy. Here is everything you need to know:`,
     card: {
       title: "GLOW token economy",
       rows: [
@@ -322,30 +322,30 @@ const RESPONSES = {
     replies: ["How do I earn more GLOW?", "Register now — claim my free GLOW", "What can I buy with GLOW?"]
   },
   "plans": {
-    text: `Glow Up has plans for both <strong>creators</strong> and <strong>businesses</strong>:`,
+    text: `We offer a range of flexible membership plans designed to suit both <strong>creators</strong> and <strong>business operators</strong> at every stage of growth. Please review the options below:`,
     planData: true,
     replies: ["Register as a creator", "Register as a business", "Tell me about GLOW tokens"]
   },
   "commission": {
-    text: `Glow Up charges a simple, transparent <strong>16% total commission</strong> on every completed deal:\n\n• <strong>8%</strong> from the influencer (deducted from their payout)\n• <strong>8%</strong> from the business (added to their total outlay)\n\nThis is the only transaction fee. No hidden charges, no monthly add-ons.\n\n<strong>Example on a $1,000 deal:</strong>\n• Business pays: $1,080 total\n• Creator receives: $920 net\n• Glow Up earns: $160`,
+    text: `Transparency is a core value at Glow Up. Our commission structure is straightforward and equitable — a <strong>total of 16%</strong> is applied per completed deal, split equally between both parties:\n\n• <strong>8%</strong> from the influencer — deducted from their payout\n• <strong>8%</strong> from the business — added to their total outlay\n\nThere are no hidden charges, no setup fees, and no monthly add-ons beyond your chosen subscription.\n\n<strong>Illustrative example on a $1,000 deal:</strong>\n• Business total outlay: $1,080\n• Creator net payout: $920\n• Glow Up platform fee: $160`,
     replies: ["See all plans", "Register now", "How does escrow work?"]
   },
   "escrow": {
-    text: `<strong>Escrow</strong> protects everyone on every deal:\n\n1. Business deposits full campaign value + 8% fee into Glow Up escrow\n2. Creator accepts the offer — campaign locks in\n3. Creator submits deliverables for review\n4. Business approves within 7 days (or auto-approved)\n5. Glow Up deducts 8% commission\n6. Creator receives net payout within 7 business days\n\nIf there's a dispute, Glow Up mediates and holds funds until resolved. Fully protected for both parties.`,
+    text: `Our <strong>escrow payment system</strong> is designed to protect all parties throughout every campaign. Here is how it works, step by step:\n\n1. The business deposits the full campaign value plus their 8% fee into Glow Up's secure escrow\n2. The creator accepts the offer — the campaign is formally locked in\n3. The creator submits their deliverables for business review\n4. The business reviews and approves within 7 business days — silence constitutes automatic approval\n5. Glow Up deducts its 8% platform commission\n6. The creator receives their net payout within 7 business days\n\nIn the event of a dispute, Glow Up's dedicated Resolution Team will mediate in good faith, holding all funds securely until a fair outcome is reached.`,
     replies: ["Register as a creator", "Register as a business", "What is the commission?"]
   },
   "register creator": {
-    text: `Let's get you set up as a <strong>creator on Glow Up</strong>! 🌱\n\nIt only takes 2 minutes and it's completely free. Let me walk you through it:`,
+    text: `Wonderful — I'd be delighted to assist you in setting up your <strong>creator account on Glow Up</strong>. 🌱\n\nThe process is straightforward, completely free, and takes approximately 2 minutes. Please follow the steps below and don't hesitate to ask if anything requires clarification:`,
     startReg: 'creator',
     replies: []
   },
   "register business": {
-    text: `Let's set up your <strong>business account on Glow Up</strong>! 🏢\n\nI'll guide you through the process step by step:`,
+    text: `Excellent — I'd be happy to assist you in establishing your <strong>business account on Glow Up</strong>. 🏢\n\nI will guide you through each step of the registration process. Please complete the fields below at your convenience:`,
     startReg: 'business',
     replies: []
   },
   "register": {
-    text: `Ready to join Glow Up? Let's get started! 🚀\n\nFirst — are you joining as a creator/influencer or as a business/brand?`,
+    text: `Wonderful — we'd love to have you on board! Let's begin your registration with Glow Up. 🚀\n\nTo ensure we set up the most suitable account for you, could you please let us know whether you are joining as a <strong>creator/influencer</strong> or as a <strong>business/brand</strong>?`,
     replies: ["Register as a creator", "Register as a business"]
   }
 };
@@ -368,7 +368,7 @@ function matchResponse(input) {
 }
 
 function getFallback(input) {
-  return `Great question! I can help you with:\n\n• What Glow Up is and how it works\n• Creator and business features\n• GLOW token economy\n• Subscription plans & pricing\n• How commissions and escrow work\n• Getting registered right now\n\nWhat would you like to know?`;
+  return `Thank you for your message. I'd be glad to assist you further. Here is a summary of the topics I can help you with:\n\n• An overview of what Glow Up is and how it works\n• Features and benefits for creators and business operators\n• The GLOW token economy and how to earn rewards\n• Subscription plans and pricing details\n• Our commission and escrow payment structure\n• Step-by-step registration assistance\n\nPlease feel free to select one of the options above, or simply type your question and I'll do my best to assist you.`;
 }
 
 // ── MESSAGE RENDERING ──
@@ -633,8 +633,8 @@ function nextRegStep(step, type) {
   const wrap = document.getElementById('chatWrap');
 
   const confirmMsgs = {
-    1: type === 'creator' ? "Got it! Now let's set up your creator profile 👇" : "Perfect! Now let's set up your campaign preferences 👇",
-    2: "Almost there — just choose your plan and you're in! 🎉"
+    1: type === 'creator' ? "Thank you — your details have been noted. Let us now proceed to set up your creator profile. 👇" : "Thank you — your details have been received. Let us now configure your campaign preferences. 👇",
+    2: "Excellent progress — you are almost there. Please select your preferred membership plan to complete your registration. 🎉"
   };
 
   addMessage(confirmMsgs[step], false, null);

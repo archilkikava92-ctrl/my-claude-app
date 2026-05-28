@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glow Up — AI Assistant</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Epilogue:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#0A0814;--deep:#110E22;--card:#16132E;--card2:#1C1938;
+  --border:rgba(139,92,246,0.18);--border2:rgba(139,92,246,0.35);
+  --text:#EDE8FF;--muted:#8B82B8;--soft:#4A4670;
+  --neon:#8B5CF6;--neon2:#7C3AED;--pink:#EC4899;
+  --cyan:#06B6D4;--green:#10B981;--gold:#F59E0B;
+  --pulse: rgba(139,92,246,0.15);
+}
+
+html,body{height:100%;font-family:'Epilogue',sans-serif;background:var(--void);color:var(--text);overflow:hidden}
+
+/* ── BACKGROUND ── */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.4;animation:drift 8s ease-in-out infinite}
+.orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(139,92,246,0.3),transparent 70%);top:-100px;left:-100px;animation-delay:0s}
+.orb2{width:300px;height:300px;background:radial-gradient(circle,rgba(236,72,153,0.2),transparent 70%);bottom:-80px;right:-80px;animation-delay:-3s}
+.orb3{width:200px;height:200px;background:radial-gradient(circle,rgba(6,182,212,0.15),transparent 70%);top:40%;left:30%;animation-delay:-5s}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-20px)}}
+
+/* ── LAYOUT ── */
+.app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+
+/* ── HEADER ── */
+.header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(10,8,20,0.8);backdrop-filter:blur(16px);flex-shrink:0}
+.header-left{display:flex;align-items:center;gap:10px}
+.ai-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--neon),var(--pink));display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;flex-shrink:0}
+.ai-avatar::after{content:'';position:absolute;bottom:1px;right:1px;width:9px;height:9px;border-radius:50%;background:var(--green);border:2px solid var(--void);animation:onlinePulse 2s infinite}
+@keyframes onlinePulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.ai-name{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text)}
+.ai-status{font-size:10px;color:var(--green);font-weight:500;margin-top:1px}
+.header-right{display:flex;gap:8px}
+.hbtn{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:'Epilogue',sans-serif;transition:all .2s}
+.hbtn:hover{border-color:var(--neon);color:var(--neon)}
+.ip-badge{display:flex;align-items:center;gap:5px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:500;color:var(--green)}
+.ip-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:onlinePulse 2s infinite}
+
+/* ── CHAT AREA ── */
+.chat-wrap{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.chat-wrap::-webkit-scrollbar{width:3px}
+.chat-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* Messages */
+.msg{display:flex;gap:8px;animation:fadeUp 0.3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.msg-ava{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:2px}
+.msg-ava.ai{background:linear-gradient(135deg,var(--neon),var(--pink))}
+.msg-ava.user{background:rgba(139,92,246,0.2);color:var(--neon);font-family:'Syne',sans-serif}
+.bubble{max-width:82%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.65}
+.bubble.ai{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text)}
+.bubble.user{background:linear-gradient(135deg,var(--neon2),#6D28D9);color:#fff;border-bottom-right-radius:4px}
+.bubble p{margin-bottom:6px}
+.bubble p:last-child{margin:0}
+.bubble strong{color:#fff;font-weight:600}
+.bubble.ai strong{color:var(--text)}
+.ts{font-size:10px;color:var(--soft);margin-top:3px}
+.ts.right{text-align:right}
+
+/* Typing indicator */
+.typing-wrap{display:flex;gap:8px;align-items:center}
+.typing-bubble{background:var(--card);border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;padding:12px 16px;display:flex;gap:4px;align-items:center}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:typingBounce 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+/* Quick reply chips */
+.quick-replies{display:flex;flex-wrap:wrap;gap:6px;padding:4px 0 4px 36px}
+.qr-chip{padding:6px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border2);color:var(--neon);background:rgba(139,92,246,0.06);transition:all .18s;font-family:'Epilogue',sans-serif}
+.qr-chip:hover{background:rgba(139,92,246,0.15);border-color:var(--neon)}
+
+/* Cards inside chat */
+.chat-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:6px}
+.chat-card-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text)}
+.cc-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.cc-row:last-child{border:none;padding-bottom:0}
+.cc-key{color:var(--muted)}.cc-val{color:var(--text);font-weight:500}
+.feature-list{display:flex;flex-direction:column;gap:6px}
+.feat-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--muted);line-height:1.5}
+.feat-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px;background:var(--neon)}
+.plan-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.plan-chip{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600}
+.pc-free{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
+.pc-pro{background:rgba(139,92,246,0.12);color:var(--neon);border:1px solid var(--border2)}
+.pc-elite{background:rgba(236,72,153,0.1);color:var(--pink);border:1px solid rgba(236,72,153,0.2)}
+.glow-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:3px 9px;font-size:11px;font-weight:600;color:var(--gold)}
+
+/* Registration form inside chat */
+.reg-form{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:6px}
+.rf-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.rf-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.rf-field label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.rf-field input,.rf-field select{background:var(--deep);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-size:12px;font-family:'Epilogue',sans-serif;outline:none;transition:border-color .18s}
+.rf-field input:focus,.rf-field select:focus{border-color:var(--neon)}
+.rf-field select option{background:var(--deep)}
+.rf-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rf-submit{width:100%;padding:11px;background:linear-gradient(135deg,var(--neon2),#6D28D9);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Epilogue',sans-serif;margin-top:4px;transition:opacity .2s}
+.rf-submit:hover{opacity:.88}
+.social-login-row{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.soc-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted);font-family:'Epilogue',sans-serif;transition:all .18s}
+.soc-btn:hover{border-color:var(--neon);color:var(--text)}
+.divider-or{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--soft);margin:8px 0}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Progress bar in reg */
+.reg-progress{display:flex;gap:4px;margin-bottom:14px}
+.rp-dot{flex:1;height:3px;border-radius:2px;background:var(--border)}
+.rp-dot.filled{background:linear-gradient(90deg,var(--neon),var(--pink))}
+
+/* ── INPUT AREA ── */
+.input-area{padding:12px 16px;border-top:1px solid var(--border);background:rgba(10,8,20,0.9);backdrop-filter:blur(16px);flex-shrink:0}
+.input-row{display:flex;gap:8px;align-items:flex-end}
+.chat-input{flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 14px;font-size:13px;font-family:'Epilogue',sans-serif;outline:none;resize:none;max-height:100px;transition:border-color .18s;line-height:1.5}
+.chat-input:focus{border-color:var(--neon)}
+.chat-input::placeholder{color:var(--soft)}
+.send-btn{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--neon),var(--pink));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .2s}
+.send-btn:hover{opacity:.88}
+.send-btn svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.input-hint{font-size:10px;color:var(--soft);text-align:center;margin-top:6px}
+
+/* New visitor banner */
+.visitor-banner{background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(236,72,153,0.08));border:1px solid var(--border2);border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px}
+.vb-icon{font-size:18px;flex-shrink:0}
+.vb-text strong{color:var(--text);font-weight:600;display:block;margin-bottom:2px}
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="ai-avatar">✦</div>
+      <div>
+        <div class="ai-name">Salvatore</div>
+        <div class="ai-status">Online · Here to assist you</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="ip-badge" id="ipBadge"><span class="ip-dot"></span><span id="ipText">Detecting...</span></div>
+      <div style="position:relative">
+        <button class="hbtn" onclick="toggleLangDropdown()" id="langBadge" style="display:flex;align-items:center;gap:5px">🌍 English</button>
+        <div id="langDropdown" style="display:none;position:absolute;top:calc(100% + 6px);right:0;
+          background:var(--card);border:1px solid var(--border2);border-radius:10px;
+          padding:6px;min-width:180px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.4);
+          max-height:280px;overflow-y:auto">
+          <div style="font-size:10px;font-weight:700;color:var(--soft);text-transform:uppercase;
+            letter-spacing:0.5px;padding:4px 8px 6px;border-bottom:1px solid var(--border)">Select language</div>
+          ${Object.entries({en:'🇬🇧 English',fr:'🇫🇷 Français',de:'🇩🇪 Deutsch',es:'🇪🇸 Español',pt:'🇧🇷 Português',ar:'🇸🇦 العربية',zh:'🇨🇳 中文',ja:'🇯🇵 日本語',ko:'🇰🇷 한국어',hi:'🇮🇳 हिन्दी',tr:'🇹🇷 Türkçe',id:'🇮🇩 Bahasa Indonesia',ru:'🇷🇺 Русский',it:'🇮🇹 Italiano',nl:'🇳🇱 Nederlands',sw:'🇰🇪 Kiswahili',pl:'🇵🇱 Polski'}).map(([code,name]) =>
+            `<button onclick="switchLanguage('${code}')" style="display:flex;align-items:center;width:100%;
+              padding:8px 10px;border-radius:7px;border:none;background:transparent;
+              color:var(--text);font-size:12px;cursor:pointer;font-family:inherit;text-align:left;
+              transition:background .15s" onmouseover="this.style.background='var(--card2)'"
+              onmouseout="this.style.background='transparent'">${name}</button>`
+          ).join('')}
+        </div>
+      </div>
+      <button class="hbtn" onclick="resetChat()">Start new chat</button>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat-wrap" id="chatWrap"></div>
+
+  <!-- INPUT -->
+  <div class="input-area">
+    <div class="input-row">
+      <textarea class="chat-input" id="chatInput" placeholder="How may I assist you today?" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" onclick="sendUserMsg()" aria-label="Send message">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div class="input-hint">Powered by Salvatore · Your privacy is fully protected</div>
+  </div>
+
+</div>
+
+<script>
+const BOT_NAME = 'Salvatore';
+const USER_INITIALS = 'You';
+let regStep = 0;
+let regData = {};
+let isTyping = false;
+let visitorIP = null;
+let isNewVisitor = true;
+let conversationState = 'greeting';
+let userLang = 'en';
+let userCountry = 'US';
+let userCountryName = 'your country';
+
+// ══════════════════════════════════════════════════════════════════
+// SALVATORE — MULTILINGUAL SYSTEM
+// 20 languages auto-detected from login IP location
+// ══════════════════════════════════════════════════════════════════
+
+const LANG_MAP = {
+  // Country code → [language code, language name, native name]
+  'US':'en','CA':'en','GB':'en','AU':'en','NZ':'en','IE':'en','ZA':'en','NG':'en','GH':'en','KE':'en','UG':'en','TZ':'en',
+  'FR':'fr','BE':'fr','CH':'fr','CD':'fr','CI':'fr','SN':'fr','CM':'fr','ML':'fr','BF':'fr',
+  'DE':'de','AT':'de',
+  'ES':'es','MX':'es','AR':'es','CO':'es','CL':'es','PE':'es','VE':'es','EC':'es','BO':'es','PY':'es','UY':'es','GT':'es','CU':'es','DO':'es','HN':'es','SV':'es','NI':'es','CR':'es','PA':'es',
+  'PT':'pt','BR':'pt','MZ':'pt','AO':'pt',
+  'IT':'it',
+  'NL':'nl',
+  'RU':'ru','BY':'ru','KZ':'ru',
+  'AR':'ar','SA':'ar','AE':'ar','EG':'ar','IQ':'ar','SY':'ar','JO':'ar','LB':'ar','KW':'ar','QA':'ar','BH':'ar','OM':'ar','YE':'ar','LY':'ar','TN':'ar','DZ':'ar','MA':'ar','SD':'ar',
+  'CN':'zh','TW':'zh','HK':'zh','SG':'zh',
+  'JP':'ja',
+  'KR':'ko',
+  'IN':'hi','NP':'hi',
+  'TR':'tr',
+  'ID':'id',
+  'PL':'pl',
+  'SW':'sw','TZ':'sw','KE':'sw'
+};
+
+const T = {
+  en: {
+    greeting_new: (name) => `Good day, and a warm welcome to <strong>Glow Up</strong>! 👋 I'm <strong>Salvatore</strong>, your dedicated Glow Up assistant.<br><br>It's wonderful to have you here. I'd be delighted to walk you through everything — what Glow Up offers, how it works, and how to get your account set up in just a few minutes.<br><br>How may I assist you today?`,
+    greeting_return: () => `Welcome back to <strong>Glow Up</strong>! 🌟 It's a pleasure to see you again. I'm <strong>Salvatore</strong> — how may I assist you today?`,
+    banner_title: 'New visitor — welcome!',
+    banner_msg: "It appears this is your first visit to Glow Up. I'd be happy to guide you through the platform and assist with your registration — it takes just 2 minutes.",
+    lang_notice: (lang, country) => `🌍 I've detected you're connecting from <strong>${country}</strong>. I'll be communicating with you in <strong>${lang}</strong>. You may switch languages at any time.`,
+    replies: ["What is Glow Up?","I am a creator — tell me more","I am a brand — tell me more","I'd like to register","How does earning work?","I forgot my password"],
+    fallback: `Thank you for your message. I'd be glad to assist you further. Here is a summary of the topics I can help you with:
+
+• An overview of what Glow Up is and how it works
+• Features and benefits for creators and business operators
+• The GLOW token economy and how to earn rewards
+• Subscription plans and pricing details
+• Our commission and escrow payment structure
+• Step-by-step registration assistance
+
+Please feel free to select one of the options above, or simply type your question and I'll do my best to assist you.`,
+    blocked_title: '🔒 Request Not Permitted',
+    lang_label: 'Language',
+    typing: 'Salvatore is typing',
+  },
+  fr: {
+    greeting_new: (name) => `Bonjour et bienvenue sur <strong>Glow Up</strong>! 👋 Je suis <strong>Salvatore</strong>, votre assistant dédié sur Glow Up.<br><br>C'est un plaisir de vous accueillir. Je serai ravi de vous guider à travers tout ce que Glow Up offre — comment ça fonctionne et comment créer votre compte en quelques minutes.<br><br>Comment puis-je vous aider aujourd'hui?`,
+    greeting_return: () => `Bon retour sur <strong>Glow Up</strong>! 🌟 C'est un plaisir de vous revoir. Je suis <strong>Salvatore</strong> — comment puis-je vous aider?`,
+    banner_title: 'Nouveau visiteur — bienvenue!',
+    banner_msg: "Il semble que c'est votre première visite sur Glow Up. Je serai heureux de vous guider sur la plateforme et de vous aider à vous inscrire — cela ne prend que 2 minutes.",
+    lang_notice: (lang, country) => `🌍 J'ai détecté que vous vous connectez depuis <strong>${country}</strong>. Je communiquerai avec vous en <strong>${lang}</strong>.`,
+    replies: ["Qu'est-ce que Glow Up?","Je suis créateur — en savoir plus","Je suis une marque — en savoir plus","Je souhaite m'inscrire","Comment gagner de l'argent?","J'ai oublié mon mot de passe"],
+    fallback: `Merci pour votre message. Je serais ravi de vous aider davantage. Voici les sujets sur lesquels je peux vous assister:
+
+• Présentation de Glow Up et son fonctionnement
+• Fonctionnalités pour les créateurs et les entreprises
+• L'économie des tokens GLOW
+• Les plans d'abonnement et tarifs
+• Structure des commissions et paiements escrow
+• Assistance à l'inscription étape par étape`,
+    blocked_title: '🔒 Demande Non Autorisée',
+    lang_label: 'Langue',
+    typing: 'Salvatore écrit',
+  },
+  de: {
+    greeting_new: (name) => `Guten Tag und herzlich willkommen bei <strong>Glow Up</strong>! 👋 Ich bin <strong>Salvatore</strong>, Ihr persönlicher Glow Up Assistent.<br><br>Es ist wunderbar, Sie hier zu haben. Ich erkläre Ihnen gerne alles — was Glow Up bietet, wie es funktioniert und wie Sie Ihr Konto in wenigen Minuten einrichten können.<br><br>Wie kann ich Ihnen heute helfen?`,
+    greeting_return: () => `Willkommen zurück bei <strong>Glow Up</strong>! 🌟 Schön, Sie wiederzusehen. Ich bin <strong>Salvatore</strong> — wie kann ich Ihnen helfen?`,
+    banner_title: 'Neuer Besucher — willkommen!',
+    banner_msg: "Es scheint, dass dies Ihr erster Besuch bei Glow Up ist. Ich helfe Ihnen gerne bei der Registrierung — es dauert nur 2 Minuten.",
+    lang_notice: (lang, country) => `🌍 Ich habe erkannt, dass Sie sich aus <strong>${country}</strong> verbinden. Ich kommuniziere mit Ihnen auf <strong>${lang}</strong>.`,
+    replies: ["Was ist Glow Up?","Ich bin Creator — mehr erfahren","Ich bin eine Marke — mehr erfahren","Ich möchte mich registrieren","Wie verdiene ich Geld?","Passwort vergessen"],
+    fallback: `Vielen Dank für Ihre Nachricht. Ich helfe Ihnen gerne weiter. Hier sind die Themen, bei denen ich helfen kann:
+
+• Überblick über Glow Up und wie es funktioniert
+• Funktionen für Creators und Unternehmen
+• GLOW Token Wirtschaft
+• Abonnementpläne und Preise
+• Provisions- und Treuhandstruktur
+• Schritt-für-Schritt-Registrierungshilfe`,
+    blocked_title: '🔒 Anfrage Nicht Erlaubt',
+    lang_label: 'Sprache',
+    typing: 'Salvatore schreibt',
+  },
+  es: {
+    greeting_new: (name) => `¡Buenos días y bienvenido a <strong>Glow Up</strong>! 👋 Soy <strong>Salvatore</strong>, su asistente dedicado en Glow Up.<br><br>Es un placer tenerlo aquí. Con mucho gusto le explicaré todo — qué ofrece Glow Up, cómo funciona y cómo configurar su cuenta en pocos minutos.<br><br>¿En qué puedo ayudarle hoy?`,
+    greeting_return: () => `¡Bienvenido de vuelta a <strong>Glow Up</strong>! 🌟 Es un placer verle de nuevo. Soy <strong>Salvatore</strong> — ¿en qué puedo ayudarle?`,
+    banner_title: '¡Nuevo visitante — bienvenido!',
+    banner_msg: "Parece que es su primera visita a Glow Up. Con gusto le guiaré a través de la plataforma y le ayudaré con el registro — solo toma 2 minutos.",
+    lang_notice: (lang, country) => `🌍 He detectado que se conecta desde <strong>${country}</strong>. Me comunicaré con usted en <strong>${lang}</strong>.`,
+    replies: ["¿Qué es Glow Up?","Soy creador — cuéntame más","Soy una marca — cuéntame más","Quiero registrarme","¿Cómo gano dinero?","Olvidé mi contraseña"],
+    fallback: `Gracias por su mensaje. Con gusto le ayudaré. Aquí hay un resumen de los temas en los que puedo asistirle:
+
+• Descripción general de Glow Up y cómo funciona
+• Funciones para creadores y empresas
+• Economía de tokens GLOW
+• Planes de suscripción y precios
+• Estructura de comisiones y pagos en garantía
+• Asistencia para el registro paso a paso`,
+    blocked_title: '🔒 Solicitud No Permitida',
+    lang_label: 'Idioma',
+    typing: 'Salvatore está escribiendo',
+  },
+  pt: {
+    greeting_new: (name) => `Bom dia e bem-vindo ao <strong>Glow Up</strong>! 👋 Sou <strong>Salvatore</strong>, seu assistente dedicado no Glow Up.<br><br>É um prazer tê-lo aqui. Terei o maior prazer em guiá-lo por tudo — o que o Glow Up oferece, como funciona e como configurar sua conta em apenas alguns minutos.<br><br>Como posso ajudá-lo hoje?`,
+    greeting_return: () => `Bem-vindo de volta ao <strong>Glow Up</strong>! 🌟 É um prazer vê-lo novamente. Sou <strong>Salvatore</strong> — como posso ajudá-lo?`,
+    banner_title: 'Novo visitante — bem-vindo!',
+    banner_msg: "Parece que esta é a sua primeira visita ao Glow Up. Ficaria feliz em guiá-lo pela plataforma e ajudar com o seu cadastro — leva apenas 2 minutos.",
+    lang_notice: (lang, country) => `🌍 Detectei que você está se conectando de <strong>${country}</strong>. Vou me comunicar com você em <strong>${lang}</strong>.`,
+    replies: ["O que é Glow Up?","Sou criador — saiba mais","Sou uma marca — saiba mais","Quero me cadastrar","Como ganho dinheiro?","Esqueci minha senha"],
+    fallback: `Obrigado pela sua mensagem. Terei o maior prazer em ajudá-lo. Aqui está um resumo dos tópicos em que posso assistir:
+
+• Visão geral do Glow Up e como funciona
+• Recursos para criadores e empresas
+• Economia de tokens GLOW
+• Planos de assinatura e preços
+• Estrutura de comissões e pagamentos em garantia
+• Assistência para cadastro passo a passo`,
+    blocked_title: '🔒 Solicitação Não Permitida',
+    lang_label: 'Idioma',
+    typing: 'Salvatore está digitando',
+  },
+  ar: {
+    greeting_new: (name) => `مرحباً وأهلاً بك في <strong>Glow Up</strong>! 👋 أنا <strong>سالفاتور</strong>، مساعدك المخصص في Glow Up.<br><br>يسعدني تواجدك هنا. سيسعدني إرشادك خلال كل شيء — ما يقدمه Glow Up، وكيف يعمل، وكيف تُنشئ حسابك في دقائق معدودة.<br><br>كيف يمكنني مساعدتك اليوم؟`,
+    greeting_return: () => `مرحباً بعودتك إلى <strong>Glow Up</strong>! 🌟 يسعدني رؤيتك مجدداً. أنا <strong>سالفاتور</strong> — كيف يمكنني مساعدتك؟`,
+    banner_title: 'زائر جديد — أهلاً بك!',
+    banner_msg: "يبدو أن هذه زيارتك الأولى لـ Glow Up. يسعدني إرشادك عبر المنصة ومساعدتك في التسجيل — لا يستغرق سوى دقيقتين.",
+    lang_notice: (lang, country) => `🌍 لقد اكتشفت أنك تتصل من <strong>${country}</strong>. سأتواصل معك باللغة <strong>${lang}</strong>.`,
+    replies: ["ما هو Glow Up؟","أنا منشئ محتوى — أخبرني المزيد","أنا علامة تجارية — أخبرني المزيد","أريد التسجيل","كيف أكسب المال؟","نسيت كلمة المرور"],
+    fallback: `شكراً لرسالتك. يسعدني مساعدتك. فيما يلي ملخص للمواضيع التي يمكنني المساعدة فيها:
+
+• نظرة عامة على Glow Up وكيفية عمله
+• الميزات للمنشئين والشركات
+• اقتصاد رمز GLOW
+• خطط الاشتراك والأسعار
+• هيكل العمولات ومدفوعات الضمان
+• مساعدة التسجيل خطوة بخطوة`,
+    blocked_title: '🔒 الطلب غير مسموح به',
+    lang_label: 'اللغة',
+    typing: 'سالفاتور يكتب',
+  },
+  zh: {
+    greeting_new: (name) => `您好，欢迎来到 <strong>Glow Up</strong>！👋 我是 <strong>Salvatore</strong>，您专属的 Glow Up 助手。<br><br>很高兴您的到来。我将很乐意为您介绍一切 — Glow Up 提供什么、如何运作，以及如何在几分钟内设置您的账户。<br><br>今天我可以为您提供什么帮助？`,
+    greeting_return: () => `欢迎回到 <strong>Glow Up</strong>！🌟 很高兴再次见到您。我是 <strong>Salvatore</strong> — 我能为您做些什么？`,
+    banner_title: '新访客 — 欢迎！',
+    banner_msg: "看来这是您首次访问 Glow Up。我很乐意引导您了解平台并协助注册 — 只需 2 分钟。",
+    lang_notice: (lang, country) => `🌍 我检测到您从 <strong>${country}</strong> 连接。我将以 <strong>${lang}</strong> 与您交流。`,
+    replies: ["什么是 Glow Up？","我是创作者 — 了解更多","我是品牌 — 了解更多","我想注册","如何赚钱？","忘记密码"],
+    fallback: `感谢您的留言。我很乐意为您提供进一步帮助。以下是我可以协助的主题：
+
+• Glow Up 的概述及其运作方式
+• 创作者和企业的功能与权益
+• GLOW 代币经济
+• 订阅计划和定价详情
+• 佣金和托管付款结构
+• 注册步骤指南`,
+    blocked_title: '🔒 请求不被允许',
+    lang_label: '语言',
+    typing: 'Salvatore 正在输入',
+  },
+  ja: {
+    greeting_new: (name) => `こんにちは、<strong>Glow Up</strong> へようこそ！👋 私は <strong>Salvatore</strong>、あなた専用の Glow Up アシスタントです。<br><br>お越しいただき大変嬉しく思います。Glow Up が提供するサービス、仕組み、そして数分でアカウントを設定する方法など、すべてご案内いたします。<br><br>本日はどのようなご用件でしょうか？`,
+    greeting_return: () => `<strong>Glow Up</strong> へお帰りなさい！🌟 またお会いできて光栄です。私は <strong>Salvatore</strong> です — どのようにお手伝いできますか？`,
+    banner_title: '新しい訪問者 — ようこそ！',
+    banner_msg: "Glow Up への初めてのご訪問のようです。プラットフォームのご案内と登録のお手伝いをいたします — わずか2分で完了します。",
+    lang_notice: (lang, country) => `🌍 <strong>${country}</strong> からのアクセスを検出しました。<strong>${lang}</strong> でご対応いたします。`,
+    replies: ["Glow Up とは？","クリエイターです — 詳しく教えて","ブランドです — 詳しく教えて","登録したい","どうやって稼ぐ？","パスワードを忘れた"],
+    fallback: `メッセージをいただきありがとうございます。喜んでお手伝いします。以下のトピックについてご案内できます：
+
+• Glow Up の概要と仕組み
+• クリエイターと企業向けの機能
+• GLOW トークンエコノミー
+• サブスクリプションプランと料金
+• 手数料とエスクロー決済の仕組み
+• 登録のステップバイステップガイド`,
+    blocked_title: '🔒 リクエストは許可されていません',
+    lang_label: '言語',
+    typing: 'Salvatore が入力中',
+  },
+  ko: {
+    greeting_new: (name) => `안녕하세요, <strong>Glow Up</strong>에 오신 것을 환영합니다! 👋 저는 <strong>Salvatore</strong>, 여러분의 전용 Glow Up 어시스턴트입니다.<br><br>이곳에 오신 것을 진심으로 환영합니다. Glow Up이 제공하는 것, 작동 방식, 몇 분 안에 계정을 설정하는 방법 등 모든 것을 안내해 드리겠습니다.<br><br>오늘 어떻게 도와드릴까요?`,
+    greeting_return: () => `<strong>Glow Up</strong>에 다시 오신 것을 환영합니다! 🌟 다시 뵙게 되어 반갑습니다. 저는 <strong>Salvatore</strong>입니다 — 어떻게 도와드릴까요?`,
+    banner_title: '새 방문자 — 환영합니다!',
+    banner_msg: "Glow Up을 처음 방문하신 것 같습니다. 플랫폼 안내와 등록을 도와드리겠습니다 — 2분이면 충분합니다.",
+    lang_notice: (lang, country) => `🌍 <strong>${country}</strong>에서 접속하셨음을 감지했습니다. <strong>${lang}</strong>로 안내해 드리겠습니다.`,
+    replies: ["Glow Up이 뭔가요?","저는 크리에이터입니다 — 더 알고 싶어요","저는 브랜드입니다 — 더 알고 싶어요","등록하고 싶습니다","어떻게 수익을 올리나요?","비밀번호를 잊었습니다"],
+    fallback: `메시지 감사합니다. 기꺼이 도와드리겠습니다. 안내 가능한 주제는 다음과 같습니다:
+
+• Glow Up 개요 및 작동 방식
+• 크리에이터 및 기업을 위한 기능
+• GLOW 토큰 경제
+• 구독 플랜 및 가격
+• 수수료 및 에스크로 결제 구조
+• 단계별 등록 안내`,
+    blocked_title: '🔒 요청이 허용되지 않습니다',
+    lang_label: '언어',
+    typing: 'Salvatore가 입력 중',
+  },
+  hi: {
+    greeting_new: (name) => `नमस्ते और <strong>Glow Up</strong> में आपका स्वागत है! 👋 मैं <strong>Salvatore</strong> हूँ, आपका समर्पित Glow Up सहायक।<br><br>आपको यहाँ देखकर बहुत अच्छा लगा। मैं आपको सब कुछ समझाने में प्रसन्न रहूँगा — Glow Up क्या प्रदान करता है, यह कैसे काम करता है और कुछ ही मिनटों में अपना खाता कैसे सेट करें।<br><br>आज मैं आपकी कैसे मदद कर सकता हूँ?`,
+    greeting_return: () => `<strong>Glow Up</strong> में वापस स्वागत है! 🌟 आपसे फिर मिलकर खुशी हुई। मैं <strong>Salvatore</strong> हूँ — मैं आपकी कैसे सहायता कर सकता हूँ?`,
+    banner_title: 'नया आगंतुक — स्वागत है!',
+    banner_msg: "लगता है यह Glow Up पर आपकी पहली यात्रा है। मुझे खुशी होगी कि मैं आपको प्लेटफ़ॉर्म के बारे में मार्गदर्शन करूँ और पंजीकरण में मदद करूँ — इसमें केवल 2 मिनट लगते हैं।",
+    lang_notice: (lang, country) => `🌍 मैंने पता लगाया है कि आप <strong>${country}</strong> से जुड़ रहे हैं। मैं आपसे <strong>${lang}</strong> में बात करूँगा।`,
+    replies: ["Glow Up क्या है?","मैं एक क्रिएटर हूँ — और जानें","मैं एक ब्रांड हूँ — और जानें","मैं पंजीकरण करना चाहता हूँ","पैसे कैसे कमाएँ?","पासवर्ड भूल गया"],
+    fallback: `आपके संदेश के लिए धन्यवाद। मैं खुशी से आगे मदद करूँगा। यहाँ उन विषयों का सारांश है जिनमें मैं सहायता कर सकता हूँ:
+
+• Glow Up का अवलोकन और यह कैसे काम करता है
+• क्रिएटर्स और व्यवसायों के लिए सुविधाएँ
+• GLOW टोकन अर्थव्यवस्था
+• सदस्यता योजनाएँ और मूल्य निर्धारण
+• कमीशन और एस्क्रो भुगतान संरचना
+• चरण-दर-चरण पंजीकरण सहायता`,
+    blocked_title: '🔒 अनुरोध अनुमत नहीं है',
+    lang_label: 'भाषा',
+    typing: 'Salvatore टाइप कर रहा है',
+  },
+  tr: {
+    greeting_new: (name) => `Merhaba ve <strong>Glow Up</strong>'a hoş geldiniz! 👋 Ben <strong>Salvatore</strong>, sizin kişisel Glow Up asistanınızım.<br><br>Sizi burada görmek harika. Glow Up'ın sunduğu her şeyi, nasıl çalıştığını ve hesabınızı dakikalar içinde nasıl kuracağınızı anlatmaktan memnuniyet duyarım.<br><br>Bugün size nasıl yardımcı olabilirim?`,
+    greeting_return: () => `<strong>Glow Up</strong>'a tekrar hoş geldiniz! 🌟 Sizi tekrar görmek güzel. Ben <strong>Salvatore</strong> — size nasıl yardımcı olabilirim?`,
+    banner_title: 'Yeni ziyaretçi — hoş geldiniz!',
+    banner_msg: "Bu Glow Up'a ilk ziyaretiniz gibi görünüyor. Platformu tanımanıza ve kaydolmanıza yardımcı olmaktan memnuniyet duyarım — yalnızca 2 dakika sürer.",
+    lang_notice: (lang, country) => `🌍 <strong>${country}</strong>'dan bağlandığınızı tespit ettim. Sizinle <strong>${lang}</strong> dilinde iletişim kuracağım.`,
+    replies: ["Glow Up nedir?","Ben bir içerik üreticisiyim — daha fazla bilgi","Ben bir markayım — daha fazla bilgi","Kayıt olmak istiyorum","Nasıl para kazanabilirim?","Şifremi unuttum"],
+    fallback: `Mesajınız için teşekkür ederim. Size yardımcı olmaktan memnuniyet duyarım. Yardımcı olabileceğim konular:
+
+• Glow Up'a genel bakış ve nasıl çalıştığı
+• İçerik üreticileri ve işletmeler için özellikler
+• GLOW token ekonomisi
+• Abonelik planları ve fiyatlandırma
+• Komisyon ve emanet ödeme yapısı
+• Adım adım kayıt yardımı`,
+    blocked_title: '🔒 İstek İzin Verilmiyor',
+    lang_label: 'Dil',
+    typing: 'Salvatore yazıyor',
+  },
+  id: {
+    greeting_new: (name) => `Selamat datang di <strong>Glow Up</strong>! 👋 Saya <strong>Salvatore</strong>, asisten Glow Up pribadi Anda.<br><br>Senang sekali Anda hadir di sini. Saya dengan senang hati akan memandu Anda melalui segalanya — apa yang ditawarkan Glow Up, cara kerjanya, dan cara menyiapkan akun Anda dalam beberapa menit.<br><br>Bagaimana saya bisa membantu Anda hari ini?`,
+    greeting_return: () => `Selamat datang kembali di <strong>Glow Up</strong>! 🌟 Senang bertemu Anda lagi. Saya <strong>Salvatore</strong> — bagaimana saya bisa membantu?`,
+    banner_title: 'Pengunjung baru — selamat datang!',
+    banner_msg: "Tampaknya ini adalah kunjungan pertama Anda ke Glow Up. Saya senang memandu Anda melalui platform dan membantu pendaftaran — hanya butuh 2 menit.",
+    lang_notice: (lang, country) => `🌍 Saya mendeteksi bahwa Anda terhubung dari <strong>${country}</strong>. Saya akan berkomunikasi dengan Anda dalam bahasa <strong>${lang}</strong>.`,
+    replies: ["Apa itu Glow Up?","Saya kreator — ceritakan lebih lanjut","Saya brand — ceritakan lebih lanjut","Saya ingin mendaftar","Bagaimana cara menghasilkan uang?","Saya lupa kata sandi"],
+    fallback: `Terima kasih atas pesan Anda. Saya dengan senang hati akan membantu lebih lanjut. Berikut ringkasan topik yang dapat saya bantu:
+
+• Gambaran umum Glow Up dan cara kerjanya
+• Fitur untuk kreator dan bisnis
+• Ekonomi token GLOW
+• Rencana langganan dan harga
+• Struktur komisi dan pembayaran escrow
+• Bantuan pendaftaran langkah demi langkah`,
+    blocked_title: '🔒 Permintaan Tidak Diizinkan',
+    lang_label: 'Bahasa',
+    typing: 'Salvatore sedang mengetik',
+  },
+  ru: {
+    greeting_new: (name) => `Добрый день и добро пожаловать в <strong>Glow Up</strong>! 👋 Я <strong>Salvatore</strong>, ваш персональный ассистент Glow Up.<br><br>Рад видеть вас здесь. Я с удовольствием расскажу вам всё — что предлагает Glow Up, как это работает и как создать аккаунт за несколько минут.<br><br>Чем я могу помочь вам сегодня?`,
+    greeting_return: () => `С возвращением в <strong>Glow Up</strong>! 🌟 Рад видеть вас снова. Я <strong>Salvatore</strong> — чем могу помочь?`,
+    banner_title: 'Новый посетитель — добро пожаловать!',
+    banner_msg: "Похоже, это ваш первый визит на Glow Up. Буду рад провести вас по платформе и помочь с регистрацией — это займёт всего 2 минуты.",
+    lang_notice: (lang, country) => `🌍 Я определил, что вы подключаетесь из <strong>${country}</strong>. Я буду общаться с вами на <strong>${lang}</strong>.`,
+    replies: ["Что такое Glow Up?","Я создатель контента — расскажи больше","Я бренд — расскажи больше","Хочу зарегистрироваться","Как зарабатывать деньги?","Забыл пароль"],
+    fallback: `Спасибо за ваше сообщение. С удовольствием помогу вам. Вот темы, по которым я могу помочь:
+
+• Обзор Glow Up и принцип работы
+• Возможности для создателей и компаний
+• Экономика токена GLOW
+• Тарифные планы и цены
+• Структура комиссий и эскроу-платежей
+• Пошаговая помощь с регистрацией`,
+    blocked_title: '🔒 Запрос Не Разрешён',
+    lang_label: 'Язык',
+    typing: 'Salvatore печатает',
+  },
+  it: {
+    greeting_new: (name) => `Buongiorno e benvenuto su <strong>Glow Up</strong>! 👋 Sono <strong>Salvatore</strong>, il tuo assistente dedicato su Glow Up.<br><br>È un piacere averti qui. Sarò lieto di guidarti in tutto — cosa offre Glow Up, come funziona e come configurare il tuo account in pochi minuti.<br><br>Come posso assisterti oggi?`,
+    greeting_return: () => `Bentornato su <strong>Glow Up</strong>! 🌟 È un piacere rivederti. Sono <strong>Salvatore</strong> — come posso aiutarti?`,
+    banner_title: 'Nuovo visitatore — benvenuto!',
+    banner_msg: "Sembra che questa sia la tua prima visita su Glow Up. Sarò lieto di guidarti attraverso la piattaforma e assisterti nella registrazione — ci vogliono solo 2 minuti.",
+    lang_notice: (lang, country) => `🌍 Ho rilevato che ti stai connettendo da <strong>${country}</strong>. Comunicherò con te in <strong>${lang}</strong>.`,
+    replies: ["Cos'è Glow Up?","Sono un creator — dimmi di più","Sono un brand — dimmi di più","Voglio registrarmi","Come si guadagna?","Ho dimenticato la password"],
+    fallback: `Grazie per il tuo messaggio. Sarò lieto di assisterti ulteriormente. Ecco i temi su cui posso aiutarti:
+
+• Panoramica di Glow Up e come funziona
+• Funzionalità per creator e aziende
+• Economia dei token GLOW
+• Piani di abbonamento e prezzi
+• Struttura delle commissioni e pagamenti in garanzia
+• Assistenza passo passo per la registrazione`,
+    blocked_title: '🔒 Richiesta Non Consentita',
+    lang_label: 'Lingua',
+    typing: 'Salvatore sta scrivendo',
+  },
+  nl: {
+    greeting_new: (name) => `Goedendag en welkom bij <strong>Glow Up</strong>! 👋 Ik ben <strong>Salvatore</strong>, uw toegewijde Glow Up assistent.<br><br>Het is fijn u hier te verwelkomen. Ik begeleid u graag door alles heen — wat Glow Up biedt, hoe het werkt en hoe u uw account in enkele minuten instelt.<br><br>Hoe kan ik u vandaag helpen?`,
+    greeting_return: () => `Welkom terug bij <strong>Glow Up</strong>! 🌟 Wat fijn u weer te zien. Ik ben <strong>Salvatore</strong> — hoe kan ik u helpen?`,
+    banner_title: 'Nieuwe bezoeker — welkom!',
+    banner_msg: "Dit lijkt uw eerste bezoek aan Glow Up te zijn. Ik help u graag door het platform en bij uw registratie — het duurt slechts 2 minuten.",
+    lang_notice: (lang, country) => `🌍 Ik heb gedetecteerd dat u verbinding maakt vanuit <strong>${country}</strong>. Ik zal met u communiceren in het <strong>${lang}</strong>.`,
+    replies: ["Wat is Glow Up?","Ik ben een creator — vertel meer","Ik ben een merk — vertel meer","Ik wil me registreren","Hoe verdien ik geld?","Wachtwoord vergeten"],
+    fallback: `Bedankt voor uw bericht. Ik help u graag verder. Hier is een overzicht van de onderwerpen waarmee ik u kan helpen:
+
+• Overzicht van Glow Up en hoe het werkt
+• Functies voor creators en bedrijven
+• GLOW token economie
+• Abonnementsplannen en prijzen
+• Commissie- en escrow-betalingsstructuur
+• Stap-voor-stap registratiehulp`,
+    blocked_title: '🔒 Verzoek Niet Toegestaan',
+    lang_label: 'Taal',
+    typing: 'Salvatore typt',
+  },
+  sw: {
+    greeting_new: (name) => `Habari na karibu sana <strong>Glow Up</strong>! 👋 Mimi ni <strong>Salvatore</strong>, msaidizi wako wa Glow Up.<br><br>Ninafurahi kukuona hapa. Nitafurahi kukuongoza kupitia kila kitu — Glow Up inatoa nini, jinsi inavyofanya kazi, na jinsi ya kuanzisha akaunti yako kwa dakika chache tu.<br><br>Ninaweza kukusaidiaje leo?`,
+    greeting_return: () => `Karibu tena <strong>Glow Up</strong>! 🌟 Ninafurahi kukuona tena. Mimi ni <strong>Salvatore</strong> — ninaweza kukusaidiaje?`,
+    banner_title: 'Mgeni mpya — karibu!',
+    banner_msg: "Inaonekana hii ni ziara yako ya kwanza kwa Glow Up. Nitafurahi kukuongoza kwenye jukwaa na kukusaidia usajili — inachukua dakika 2 tu.",
+    lang_notice: (lang, country) => `🌍 Nimeona kwamba unaunganika kutoka <strong>${country}</strong>. Nitawasiliana nawe kwa <strong>${lang}</strong>.`,
+    replies: ["Glow Up ni nini?","Mimi ni muundaji — niambie zaidi","Mimi ni chapa — niambie zaidi","Nataka kusajiliwa","Ninawezaje kupata pesa?","Nimesahau nenosiri"],
+    fallback: `Asante kwa ujumbe wako. Nitafurahi kukusaidia zaidi. Hapa kuna muhtasari wa mada ninazoweza kukusaidia:
+
+• Muhtasari wa Glow Up na jinsi inavyofanya kazi
+• Vipengele kwa waundaji na biashara
+• Uchumi wa tokeni ya GLOW
+• Mipango ya usajili na bei
+• Muundo wa kamisheni na malipo ya amana
+• Usaidizi wa usajili hatua kwa hatua`,
+    blocked_title: '🔒 Ombi Hairuhusiwi',
+    lang_label: 'Lugha',
+    typing: 'Salvatore anaandika',
+  },
+  pl: {
+    greeting_new: (name) => `Dzień dobry i witamy w <strong>Glow Up</strong>! 👋 Jestem <strong>Salvatore</strong>, Wasz dedykowany asystent Glow Up.<br><br>Cieszę się, że tu jesteś. Z przyjemnością przeprowadzę Cię przez wszystko — co oferuje Glow Up, jak to działa i jak skonfigurować konto w kilka minut.<br><br>W czym mogę Ci dziś pomóc?`,
+    greeting_return: () => `Witaj z powrotem w <strong>Glow Up</strong>! 🌟 Miło Cię znowu widzieć. Jestem <strong>Salvatore</strong> — jak mogę Ci pomóc?`,
+    banner_title: 'Nowy odwiedzający — witamy!',
+    banner_msg: "Wygląda na to, że jest to Twoja pierwsza wizyta w Glow Up. Chętnie przeprowadzę Cię przez platformę i pomogę w rejestracji — zajmuje to tylko 2 minuty.",
+    lang_notice: (lang, country) => `🌍 Wykryłem, że łączysz się z <strong>${country}</strong>. Będę komunikować się z Tobą w języku <strong>${lang}</strong>.`,
+    replies: ["Czym jest Glow Up?","Jestem twórcą — powiedz mi więcej","Jestem marką — powiedz mi więcej","Chcę się zarejestrować","Jak zarabiać pieniądze?","Zapomniałem hasła"],
+    fallback: `Dziękuję za wiadomość. Chętnie pomogę Ci dalej. Oto podsumowanie tematów, w których mogę pomóc:
+
+• Przegląd Glow Up i jak to działa
+• Funkcje dla twórców i firm
+• Ekonomia tokenów GLOW
+• Plany subskrypcji i ceny
+• Struktura prowizji i płatności escrow
+• Pomoc krok po kroku przy rejestracji`,
+    blocked_title: '🔒 Żądanie Nie Jest Dozwolone',
+    lang_label: 'Język',
+    typing: 'Salvatore pisze',
+  }
+};
+
+// Language names for display
+const LANG_NAMES = {
+  en:'English', fr:'Français', de:'Deutsch', es:'Español', pt:'Português',
+  ar:'العربية', zh:'中文', ja:'日本語', ko:'한국어', hi:'हिन्दी',
+  tr:'Türkçe', id:'Bahasa Indonesia', ru:'Русский', it:'Italiano',
+  nl:'Nederlands', sw:'Kiswahili', pl:'Polski'
+};
+
+function getLang(countryCode) {
+  return LANG_MAP[countryCode] || 'en';
+}
+
+function t(key, ...args) {
+  const lang = userLang;
+  const translations = T[lang] || T['en'];
+  const val = translations[key] || (T['en'] && T['en'][key]);
+  if (typeof val === 'function') return val(...args);
+  return val || '';
+}
+
+// ── IP DETECTION & LANGUAGE SETUP ──
+async function detectIP() {
+  try {
+    const res = await fetch('https://ipapi.co/json/');
+    const data = await res.json();
+    visitorIP = data.ip || 'Unknown';
+    userCountry = data.country_code || 'US';
+    userCountryName = data.country_name || 'your country';
+    userLang = getLang(userCountry);
+
+    document.getElementById('ipText').textContent = visitorIP;
+    applyLanguageUI();
+    checkNewVisitor(visitorIP);
+  } catch {
+    visitorIP = 'Unknown';
+    userLang = navigator.language ? navigator.language.split('-')[0] : 'en';
+    if (!T[userLang]) userLang = 'en';
+    document.getElementById('ipText').textContent = 'New visitor';
+    applyLanguageUI();
+    startGreeting(true);
+  }
+}
+
+function applyLanguageUI() {
+  // Update input placeholder
+  const input = document.getElementById('chatInput');
+  if (input) {
+    const placeholders = {
+      en:'How may I assist you today?', fr:'Comment puis-je vous aider?',
+      de:'Wie kann ich Ihnen helfen?', es:'¿En qué puedo ayudarle?',
+      pt:'Como posso ajudá-lo?', ar:'كيف يمكنني مساعدتك؟',
+      zh:'今天我可以为您提供什么帮助？', ja:'本日はどのようなご用件でしょうか？',
+      ko:'어떻게 도와드릴까요?', hi:'आज मैं आपकी कैसे मदद कर सकता हूँ?',
+      tr:'Bugün size nasıl yardımcı olabilirim?', id:'Bagaimana saya bisa membantu Anda?',
+      ru:'Чем я могу помочь вам сегодня?', it:'Come posso assisterla oggi?',
+      nl:'Hoe kan ik u vandaag helpen?', sw:'Ninaweza kukusaidiaje leo?',
+      pl:'W czym mogę Ci dziś pomóc?'
+    };
+    input.placeholder = placeholders[userLang] || placeholders['en'];
+  }
+
+  // Show language selector badge
+  updateLangBadge();
+
+  // RTL support for Arabic
+  if (userLang === 'ar') {
+    document.body.setAttribute('dir', 'rtl');
+    document.body.style.direction = 'rtl';
+  } else {
+    document.body.removeAttribute('dir');
+    document.body.style.direction = 'ltr';
+  }
+}
+
+function updateLangBadge() {
+  const badge = document.getElementById('langBadge');
+  if (badge) {
+    badge.textContent = '🌍 ' + (LANG_NAMES[userLang] || 'English');
+  }
+}
+
+function switchLanguage(lang) {
+  if (!T[lang]) return;
+  userLang = lang;
+  applyLanguageUI();
+  document.getElementById('langDropdown').style.display = 'none';
+  // Notify user of language change
+  const wrap = document.getElementById('chatWrap');
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.style.animation = 'fadeUp 0.3s ease';
+  const langName = LANG_NAMES[lang] || lang;
+  msg.innerHTML = `
+    <div class="msg-ava ai">✦</div>
+    <div style="max-width:85%">
+      <div class="bubble ai" style="border-left:3px solid var(--cyan)">
+        <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:4px">🌍 Language switched to ${langName}</div>
+        <div style="font-size:13px;line-height:1.65">${t('greeting_return')}</div>
+      </div>
+      <div class="ts">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`;
+  wrap.appendChild(msg);
+  wrap.scrollTop = 99999;
+  addQuickReplies(t('replies'), wrap);
+}
+
+function toggleLangDropdown() {
+  const dd = document.getElementById('langDropdown');
+  dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
+}
+
+function checkNewVisitor(ip) {
+  const seen = localStorage.getItem('gu_seen_' + ip);
+  isNewVisitor = !seen;
+  if (isNewVisitor) {
+    localStorage.setItem('gu_seen_' + ip, Date.now());
+  }
+  startGreeting(isNewVisitor);
+}
+
+function startGreeting(isNew) {
+  setTimeout(() => {
+    if (isNew) {
+      showNewVisitorBanner();
+      setTimeout(() => typeMessage(getGreetingMsg(true), getGreetingReplies()), 800);
+    } else {
+      setTimeout(() => typeMessage(getGreetingMsg(false), getGreetingReplies()), 400);
+    }
+  }, 600);
+}
+
+function getGreetingMsg(isNew) {
+  if (isNew) {
+    return `Good day, and a warm welcome to <strong>Glow Up</strong>! 👋 I'm <strong>Salvatore</strong>, your dedicated Glow Up assistant.\n\nIt's wonderful to have you here. I'd be delighted to walk you through everything — what Glow Up offers, how it works, and how to get your account set up in just a few minutes.\n\nHow may I assist you today?`;
+  }
+  return `Welcome back to <strong>Glow Up</strong>! 🌟 It's a pleasure to see you again. I'm <strong>Salvatore</strong> — how may I assist you today?`;
+}
+
+function getGreetingReplies() {
+  return [
+    "What is Glow Up?",
+    "I'm a creator — tell me more",
+    "I'm a brand — tell me more",
+    "Register me now",
+    "How does earning work?"
+  ];
+}
+
+function showNewVisitorBanner() {
+  const wrap = document.getElementById('chatWrap');
+  // Language notice card (shown before banner)
+  const langNotice = document.createElement('div');
+  langNotice.style.cssText = 'margin-bottom:8px;padding:9px 13px;background:rgba(6,182,212,0.09);border:1px solid rgba(6,182,212,0.22);border-radius:10px;font-size:12px;color:#06B6D4;line-height:1.6';
+  langNotice.innerHTML = t('lang_notice', LANG_NAMES[userLang] || 'English', userCountryName);
+  wrap.appendChild(langNotice);
+  // Visitor welcome banner
+  const banner = document.createElement('div');
+  banner.className = 'visitor-banner';
+  banner.innerHTML = `<div class="vb-icon">🔍</div><div class="vb-text"><strong>${t('banner_title')}</strong><br>${t('banner_msg')}</div>`;
+  wrap.appendChild(banner);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+// ── AI RESPONSES ──
+const RESPONSES = {
+  "what is glow up": {
+    text: `Thank you for asking. <strong>Glow Up</strong> is a professional marketplace that seamlessly connects <strong>creators and influencers</strong> with <strong>brands and business operators</strong> for paid content partnerships.\n\nWe serve as a trusted intermediary — managing the matching process, digital contracts, secure payments, and analytics, so that you can focus entirely on what you do best.`,
+    card: {
+      title: "Glow Up at a glance",
+      rows: [
+        ["Platform type", "Creator-brand marketplace"],
+        ["Who it's for", "Influencers & Businesses"],
+        ["Commission", "8% from creator + 8% from brand"],
+        ["Min. followers needed", "Zero — anyone can join"],
+        ["Native token", "GLOW (250 free on signup)"],
+        ["Deals closed", "$4.2M+ and growing"]
+      ]
+    },
+    replies: ["How do I earn money?", "Tell me about GLOW tokens", "What are the plans?", "Register me now"]
+  },
+  "creator": {
+    text: `We're delighted to have you consider joining as a <strong>creator on Glow Up</strong>. Here is a comprehensive overview of what the platform offers you:\n\n<strong>Your creator journey with Glow Up:</strong>`,
+    features: [
+      "Free signup — zero followers needed to start",
+      "Build a professional portfolio with bio, media, rate card & niche tags",
+      "Get matched with brands via AI-powered discovery",
+      "Receive brand offers directly — accept or decline on your terms",
+      "Calendar blocks your campaign dates automatically",
+      "Track gross earnings, GLOW tokens & campaign history",
+      "Grow through 4 tiers: Aspiring → Rising → Creator → Verified Pro",
+      "Earn 250 GLOW tokens free on signup + 50 per connected social"
+    ],
+    replies: ["What are the creator plans?", "How much can I earn?", "Register as a creator", "Tell me about GLOW tokens"]
+  },
+  "brand": {
+    text: `Thank you for your interest in partnering with us as a <strong>business or brand on Glow Up</strong>. Here is a full overview of the professional tools and services available to you:\n\n<strong>Your business toolkit on Glow Up:</strong>`,
+    features: [
+      "Search & filter verified creators by niche, tier, engagement rate",
+      "Send campaign offers with full brief, deliverables & compensation",
+      "Escrow-protected payments — funds held until deliverables approved",
+      "Digital three-party contracts signed in-app",
+      "Campaign calendar and deadline tracking",
+      "Analytics dashboard with ROI reporting",
+      "Pay by card, crypto (BTC/ETH/USDT) or GLOW tokens",
+      "16% total commission — 8% from you + 8% from the creator"
+    ],
+    replies: ["Business plan pricing", "How does escrow work?", "Register as a business", "What is the 16% commission?"]
+  },
+  "earn": {
+    text: `Excellent question. Here is a clear and transparent breakdown of how <strong>creators generate income</strong> through Glow Up:`,
+    card: {
+      title: "Creator earnings breakdown",
+      rows: [
+        ["Campaign fees", "Paid by brand — you negotiate the amount"],
+        ["GLOW token bonuses", "Earned for activity, campaigns & referrals"],
+        ["Referral rewards", "200 GLOW per friend who joins & completes profile"],
+        ["Glow Up fee", "8% deducted from your deal value"],
+        ["Example: $1,000 deal", "You receive $920 net"],
+        ["Payout methods", "Bank, PayPal, Crypto or GLOW tokens"]
+      ]
+    },
+    replies: ["What are the creator plans?", "Register as a creator", "Tell me about GLOW tokens"]
+  },
+  "glow": {
+    text: `Certainly — the <strong>GLOW Token</strong> is Glow Up's native utility token, and it plays a central role in our platform economy. Here is everything you need to know:`,
+    card: {
+      title: "GLOW token economy",
+      rows: [
+        ["Ticker", "GLOW"],
+        ["Starting price", "$0.10 per GLOW"],
+        ["Signup bonus", "250 GLOW free"],
+        ["Per social connected", "+50 GLOW"],
+        ["Per campaign completed", "+500 GLOW"],
+        ["Use GLOW for", "Subscriptions, boosts & deal payments"]
+      ]
+    },
+    replies: ["How do I earn more GLOW?", "Register now — claim my free GLOW", "What can I buy with GLOW?"]
+  },
+  "plans": {
+    text: `We offer a range of flexible membership plans designed to suit both <strong>creators</strong> and <strong>business operators</strong> at every stage of growth. Please review the options below:`,
+    planData: true,
+    replies: ["Register as a creator", "Register as a business", "Tell me about GLOW tokens"]
+  },
+  "commission": {
+    text: `Transparency is a core value at Glow Up. Our commission structure is straightforward and equitable — a <strong>total of 16%</strong> is applied per completed deal, split equally between both parties:\n\n• <strong>8%</strong> from the influencer — deducted from their payout\n• <strong>8%</strong> from the business — added to their total outlay\n\nThere are no hidden charges, no setup fees, and no monthly add-ons beyond your chosen subscription.\n\n<strong>Illustrative example on a $1,000 deal:</strong>\n• Business total outlay: $1,080\n• Creator net payout: $920\n• Glow Up platform fee: $160`,
+    replies: ["See all plans", "Register now", "How does escrow work?"]
+  },
+  "escrow": {
+    text: `Our <strong>escrow payment system</strong> is designed to protect all parties throughout every campaign. Here is how it works, step by step:\n\n1. The business deposits the full campaign value plus their 8% fee into Glow Up's secure escrow\n2. The creator accepts the offer — the campaign is formally locked in\n3. The creator submits their deliverables for business review\n4. The business reviews and approves within 7 business days — silence constitutes automatic approval\n5. Glow Up deducts its 8% platform commission\n6. The creator receives their net payout within 7 business days\n\nIn the event of a dispute, Glow Up's dedicated Resolution Team will mediate in good faith, holding all funds securely until a fair outcome is reached.`,
+    replies: ["Register as a creator", "Register as a business", "What is the commission?"]
+  },
+  "register creator": {
+    text: `Wonderful — I'd be delighted to assist you in setting up your <strong>creator account on Glow Up</strong>. 🌱\n\nThe process is straightforward, completely free, and takes approximately 2 minutes. Please follow the steps below and don't hesitate to ask if anything requires clarification:`,
+    startReg: 'creator',
+    replies: []
+  },
+  "register business": {
+    text: `Excellent — I'd be happy to assist you in establishing your <strong>business account on Glow Up</strong>. 🏢\n\nI will guide you through each step of the registration process. Please complete the fields below at your convenience:`,
+    startReg: 'business',
+    replies: []
+  },
+  "register": {
+    text: `Wonderful — we'd love to have you on board! Let's begin your registration with Glow Up. 🚀\n\nTo ensure we set up the most suitable account for you, could you please let us know whether you are joining as a <strong>creator/influencer</strong> or as a <strong>business/brand</strong>?`,
+    replies: ["Register as a creator", "Register as a business"]
+  },
+  "forgot password": {
+    text: `I understand — it can happen to anyone. Let me assist you in recovering access to your Glow Up account.\n\nPlease enter the <strong>email address</strong> registered to your account below, and I will send a secure one-time recovery code to that address immediately.`,
+    startForgot: true,
+    replies: []
+  }
+};
+
+// ══════════════════════════════════════════════════════════
+// GLOW UP AI — SECURITY & RESTRICTION LAYER
+// Protects against disclosure of: financial data, user accounts,
+// internal systems, legal details, staff info, and raw DB queries.
+// ══════════════════════════════════════════════════════════
+
+const RESTRICTED_TOPICS = [
+  // ── FINANCIAL & REVENUE ──
+  { label:'financial',   patterns:['revenue','profit','loss','annual report','balance sheet','income statement','net worth','valuation','funding','investors','investment round','series a','series b','ipo','total earnings','company earnings','how much does glow up make','glow up revenue','glow up profit','how much money','financial statement','accounts payable','accounts receivable','operating cost','overhead','burn rate','runway','cash flow','bank account','bank balance','company bank','wire transfer','company finances','internal budget','budget breakdown','financial data','financial records','financial report'] },
+
+  // ── USER ACCOUNTS & DATABASE ──
+  { label:'accounts',    patterns:['list of users','user list','user database','all users','registered users','how many users','user accounts','member list','user data','user records','user emails','user phone numbers','database','db','sql','query','all accounts','existing accounts','account details','find user','lookup user','user info','user profile data','other users','someone else account','access account','view account','account number','user id','account id','internal id'] },
+
+  // ── PERSONAL DATA & PRIVACY ──
+  { label:'personal',    patterns:['personal data','private data','someone email','user email address','find email','find phone','phone number of','contact details of','address of','location of','private information','confidential','personal information','data breach','leak','exposed data','gdpr request','data access request','who is user','who registered','find creator','find influencer'] },
+
+  // ── INTERNAL OPERATIONS ──
+  { label:'internal',    patterns:['internal system','internal process','backend','source code','codebase','api key','secret key','admin panel','admin access','admin login','staff login','employee login','internal tool','system architecture','server','infrastructure','database schema','tech stack','internal dashboard','operations','internal data','internal report','company password','credentials'] },
+
+  // ── LEGAL & CONTRACTUAL ──
+  { label:'legal',       patterns:['legal dispute','pending lawsuit','litigation','court case','legal proceedings','legal liability','legal exposure','legal risk','settlement','legal documents','confidential agreement','nda','non disclosure','legal team','legal advice','sue','lawsuit'] },
+
+  // ── STAFF & PERSONNEL ──
+  { label:'personnel',   patterns:['staff salary','employee salary','pay grade','ceo salary','founder salary','who owns','who founded','shareholder','equity','ownership stake','org chart','staff list','employee list','who works at','team members personal','home address','personal number of staff'] },
+
+  // ── COMPETITOR / MARKET INTEL ──
+  { label:'competitive', patterns:['how much do competitors','competitor data','other platforms financials','market share report','confidential market data'] },
+];
+
+// Violation response bank — formal & consistent
+const RESTRICTION_RESPONSES = {
+  financial: {
+    title: '🔒 Restricted — Financial Information',
+    msg: `Thank you for your enquiry. I regret that I am unable to share any internal financial information, revenue data, company earnings, or financial records.
+
+For legitimate financial or investor-related enquiries, please contact us directly at <strong>finance@glowup.io</strong>. We are happy to assist through the appropriate channel.`
+  },
+  accounts: {
+    title: '🔒 Restricted — User Account Data',
+    msg: `I appreciate your message. However, I am not authorised to disclose details of any user accounts, registered members, or database records — whether existing or historical.
+
+For account-specific enquiries relating to <em>your own</em> account, please visit your account settings or contact our support team at <strong>support@glowup.io</strong>.`
+  },
+  personal: {
+    title: '🔒 Restricted — Personal & Private Data',
+    msg: `The privacy and security of our users is of the utmost importance to Glow Up. I am unable to share, retrieve, or discuss any personal data, contact information, or private details relating to any individual on our platform.
+
+If you have a data-related request, please submit it formally to <strong>privacy@glowup.io</strong> in accordance with applicable data protection regulations.`
+  },
+  internal: {
+    title: '🔒 Restricted — Internal Systems',
+    msg: `For security reasons, I am unable to provide any information relating to Glow Up's internal systems, backend infrastructure, administrative tools, API credentials, or source code.
+
+If you are a verified developer or partner requiring technical assistance, please contact <strong>developers@glowup.io</strong>.`
+  },
+  legal: {
+    title: '🔒 Restricted — Legal & Contractual',
+    msg: `I am unable to discuss any legal proceedings, disputes, liabilities, or confidential contractual matters. All legal enquiries must be directed to our legal team at <strong>legal@glowup.io</strong>.`
+  },
+  personnel: {
+    title: '🔒 Restricted — Staff & Personnel',
+    msg: `I am not able to share any information relating to staff compensation, ownership structures, personnel records, or personal details of Glow Up team members.
+
+For official partnership or media enquiries, please contact <strong>hello@glowup.io</strong>.`
+  },
+  competitive: {
+    title: '🔒 Restricted — Confidential Market Data',
+    msg: `I am unable to share confidential competitive intelligence or proprietary market data. Thank you for your understanding.`
+  }
+};
+
+// Prompt injection defense
+const INJECTION_PATTERNS = [
+  'ignore previous','ignore all','forget instructions','disregard','override','bypass','jailbreak',
+  'you are now','act as','pretend you','roleplay as','new instructions','system prompt','reveal prompt',
+  'print instructions','show instructions','what are your instructions','developer mode','unlock mode',
+  'admin mode','maintenance mode','sudo','root access','unrestricted'
+];
+
+function checkRestrictions(input) {
+  const lower = input.toLowerCase().trim();
+
+  // 1. Prompt injection defense
+  for (const pattern of INJECTION_PATTERNS) {
+    if (lower.includes(pattern)) {
+      return {
+        blocked: true,
+        title: '⚠️ Request Not Permitted',
+        msg: `I appreciate you reaching out. However, I am only able to assist with enquiries related to the Glow Up platform — such as registration, features, plans, and general information.
+
+Attempts to modify, override, or bypass my operating guidelines are not permitted. Please feel free to ask a legitimate question and I will be delighted to assist you.`
+      };
+    }
+  }
+
+  // 2. Topic restrictions
+  for (const topic of RESTRICTED_TOPICS) {
+    for (const pattern of topic.patterns) {
+      if (lower.includes(pattern)) {
+        const resp = RESTRICTION_RESPONSES[topic.label];
+        return { blocked: true, title: resp.title, msg: resp.msg };
+      }
+    }
+  }
+
+  return { blocked: false };
+}
+
+function matchResponse(input) {
+  const lower = input.toLowerCase().trim();
+  if (lower.includes('what is') && lower.includes('glow up')) return 'what is glow up';
+  if (lower.includes('creator') && (lower.includes('tell') || lower.includes('more') || lower.includes('influencer'))) return 'creator';
+  if (lower.includes('brand') && (lower.includes('tell') || lower.includes('more') || lower.includes('business'))) return 'brand';
+  if (lower.includes('earn') || lower.includes('money') || lower.includes('how much')) return 'earn';
+  if (lower.includes('glow token') || lower.includes('glow coin') || lower.includes('token')) return 'glow';
+  if (lower.includes('plan') || lower.includes('subscription') || lower.includes('pricing')) return 'plans';
+  if (lower.includes('commission') || lower.includes('16%') || lower.includes('fee')) return 'commission';
+  if (lower.includes('escrow') || lower.includes('payment protection')) return 'escrow';
+  if ((lower.includes('register') || lower.includes('sign up') || lower.includes('join') || lower.includes('start')) && lower.includes('creator')) return 'register creator';
+  if ((lower.includes('register') || lower.includes('sign up') || lower.includes('join')) && (lower.includes('business') || lower.includes('brand'))) return 'register business';
+  if (lower.includes('register') || lower.includes('sign up') || lower.includes('join') || lower.includes('get started') || lower.includes('register me')) return 'register';
+  if (lower.includes('what is glow up') || lower.includes('about glow up') || lower.includes('glow up?')) return 'what is glow up';
+  if (lower.includes('forgot') || lower.includes('forget') || lower.includes('lost') || lower.includes('reset password') || lower.includes('change password') || lower.includes('cant login') || lower.includes("can't login") || lower.includes('cannot login') || lower.includes('locked out') || lower.includes('recover account') || lower.includes('account recovery') || lower.includes('password help') || lower.includes('password issue') || lower.includes('dont remember') || lower.includes("don't remember") || (lower.includes('password') && (lower.includes('forgot') || lower.includes('lost') || lower.includes('reset') || lower.includes('forgot') || lower.includes('help')))) return 'forgot password';
+  return null;
+}
+
+function getFallback(input) {
+  return t('fallback');
+}
+
+// ── MESSAGE RENDERING ──
+function addMessage(content, isUser, extras) {
+  const wrap = document.getElementById('chatWrap');
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'msg ' + (isUser ? 'user' : '');
+
+  const ava = document.createElement('div');
+  ava.className = 'msg-ava ' + (isUser ? 'user' : 'ai');
+  ava.textContent = isUser ? 'Me' : '✦';
+
+  const right = document.createElement('div');
+  right.style.maxWidth = '85%';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble ' + (isUser ? 'user' : 'ai');
+  bubble.innerHTML = content.replace(/\n/g, '<br>');
+
+  const time = document.createElement('div');
+  time.className = 'ts' + (isUser ? ' right' : '');
+  time.textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+  right.appendChild(bubble);
+  right.appendChild(time);
+
+  if (!isUser) {
+    msgDiv.appendChild(ava);
+    msgDiv.appendChild(right);
+  } else {
+    msgDiv.appendChild(right);
+    msgDiv.appendChild(ava);
+  }
+
+  wrap.appendChild(msgDiv);
+
+  // Extras
+  if (extras) {
+    if (extras.card) addChatCard(extras.card, wrap);
+    if (extras.features) addFeatureList(extras.features, wrap);
+    if (extras.planData) addPlanCard(wrap);
+    if (extras.replies && extras.replies.length) addQuickReplies(extras.replies, wrap);
+    if (extras.startReg) startRegistration(extras.startReg, wrap);
+    if (extras.startForgot) startForgotPassword(wrap);
+  }
+
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function addChatCard(card, wrap) {
+  const div = document.createElement('div');
+  div.style.paddingLeft = '36px';
+  const inner = document.createElement('div');
+  inner.className = 'chat-card';
+  inner.innerHTML = `<div class="chat-card-title">${card.title}</div>` +
+    card.rows.map(r => `<div class="cc-row"><span class="cc-key">${r[0]}</span><span class="cc-val">${r[1]}</span></div>`).join('');
+  div.appendChild(inner);
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function addFeatureList(features, wrap) {
+  const div = document.createElement('div');
+  div.style.paddingLeft = '36px';
+  const inner = document.createElement('div');
+  inner.className = 'chat-card';
+  inner.innerHTML = `<div class="feature-list">${features.map(f => `<div class="feat-item"><div class="feat-dot"></div><div>${f}</div></div>`).join('')}</div>`;
+  div.appendChild(inner);
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function addPlanCard(wrap) {
+  const div = document.createElement('div');
+  div.style.paddingLeft = '36px';
+  div.innerHTML = `<div class="chat-card">
+    <div class="chat-card-title">Creator plans</div>
+    <div class="cc-row"><span class="cc-key">Starter</span><span class="cc-val">Free · 5 matches/mo · 8% commission</span></div>
+    <div class="cc-row"><span class="cc-key">Pro</span><span class="cc-val">$29/mo · Unlimited · 8% commission</span></div>
+    <div class="cc-row"><span class="cc-key">Elite</span><span class="cc-val">$79/mo · Priority + manager · 8%</span></div>
+    <div class="chat-card-title" style="margin-top:12px">Business plans</div>
+    <div class="cc-row"><span class="cc-key">Growth</span><span class="cc-val">$99/mo · 10 campaigns · 8% commission</span></div>
+    <div class="cc-row"><span class="cc-key">Scale</span><span class="cc-val">$299/mo · Unlimited · 8% commission</span></div>
+    <div class="cc-row"><span class="cc-key">Enterprise</span><span class="cc-val">Custom · White-glove · 8% commission</span></div>
+    <div class="plan-chips" style="margin-top:10px">
+      <span class="plan-chip pc-free">Starter free</span>
+      <span class="plan-chip pc-pro">GLOW token payment accepted</span>
+      <span class="plan-chip pc-elite">Crypto accepted</span>
+    </div>
+  </div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function addQuickReplies(replies, wrap) {
+  const div = document.createElement('div');
+  div.className = 'quick-replies';
+  replies.forEach(r => {
+    const btn = document.createElement('button');
+    btn.className = 'qr-chip';
+    btn.textContent = r;
+    btn.onclick = () => { handleQuickReply(r); div.remove(); };
+    div.appendChild(btn);
+  });
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+// ── TYPING + RESPONSE ──
+function showTyping() {
+  const wrap = document.getElementById('chatWrap');
+  const div = document.createElement('div');
+  div.className = 'msg';
+  div.id = 'typingIndicator';
+  div.innerHTML = `<div class="msg-ava ai">✦</div><div class="typing-wrap"><div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function hideTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function typeMessage(text, replies, extras) {
+  showTyping();
+  const delay = Math.min(800 + text.length * 3, 2200);
+  setTimeout(() => {
+    hideTyping();
+    addMessage(text, false, { ...extras, replies });
+  }, delay);
+}
+
+// ── REGISTRATION FLOW ──
+function startRegistration(type, wrap) {
+  regStep = 1;
+  regData.type = type;
+  setTimeout(() => showRegStep(type, wrap), 400);
+}
+
+function showRegStep(type, wrap) {
+  const div = document.createElement('div');
+  div.style.paddingLeft = '36px';
+  div.id = 'regForm';
+
+  if (type === 'creator') {
+    if (regStep === 1) {
+      div.innerHTML = `<div class="reg-form">
+        <div class="reg-progress">
+          <div class="rp-dot filled"></div><div class="rp-dot"></div><div class="rp-dot"></div>
+        </div>
+        <div class="rf-title">Step 1 of 3 — Your details</div>
+        <div class="rf-row">
+          <div class="rf-field"><label>First name</label><input type="text" id="rf_fname" placeholder="Your first name"></div>
+          <div class="rf-field"><label>Last name</label><input type="text" id="rf_lname" placeholder="Your last name"></div>
+        </div>
+        <div class="rf-field"><label>Email address</label><input type="email" id="rf_email" placeholder="your@email.com"></div>
+        <div class="rf-field"><label>Password</label><input type="password" id="rf_pass" placeholder="Create a password"></div>
+        <div class="divider-or">or sign up with</div>
+        <div class="social-login-row">
+          <button class="soc-btn" onclick="socialReg('Instagram')">📸 Continue with Instagram</button>
+          <button class="soc-btn" onclick="socialReg('TikTok')">🎵 Continue with TikTok</button>
+        </div>
+        <button class="rf-submit" onclick="nextRegStep(1,'creator')">Continue →</button>
+      </div>`;
+    } else if (regStep === 2) {
+      div.innerHTML = `<div class="reg-form">
+        <div class="reg-progress">
+          <div class="rp-dot filled"></div><div class="rp-dot filled"></div><div class="rp-dot"></div>
+        </div>
+        <div class="rf-title">Step 2 of 3 — Your creator profile</div>
+        <div class="rf-field"><label>Primary platform</label>
+          <select id="rf_platform"><option>Instagram</option><option>TikTok</option><option>YouTube</option><option>Twitter/X</option><option>LinkedIn</option><option>Twitch</option><option>Snapchat</option></select>
+        </div>
+        <div class="rf-field"><label>Follower count (or leave at 0)</label>
+          <select id="rf_followers"><option>0 — just starting out</option><option>1–100</option><option>100–1K</option><option>1K–10K</option><option>10K–100K</option><option>100K–1M</option><option>1M+</option></select>
+        </div>
+        <div class="rf-field"><label>Your main niche</label>
+          <select id="rf_niche"><option>Fashion</option><option>Beauty</option><option>Fitness</option><option>Travel</option><option>Food</option><option>Tech</option><option>Gaming</option><option>Finance</option><option>Sustainability</option><option>Lifestyle</option><option>Other</option></select>
+        </div>
+        <div class="rf-field"><label>Country</label>
+          <select id="rf_country"><option>United States</option><option>United Kingdom</option><option>Australia</option><option>Canada</option><option>South Africa</option><option>Nigeria</option><option>India</option><option>Germany</option><option>France</option><option>Other</option></select>
+        </div>
+        <button class="rf-submit" onclick="nextRegStep(2,'creator')">Continue →</button>
+      </div>`;
+    } else if (regStep === 3) {
+      div.innerHTML = `<div class="reg-form">
+        <div class="reg-progress">
+          <div class="rp-dot filled"></div><div class="rp-dot filled"></div><div class="rp-dot filled"></div>
+        </div>
+        <div class="rf-title">Step 3 of 3 — Choose your plan</div>
+        <div class="cc-row" style="font-size:12px;padding:8px 0;border-bottom:1px solid var(--border)"><span class="cc-key">Starter</span><span class="cc-val" style="color:var(--green)">Free forever · 8% commission</span></div>
+        <div class="cc-row" style="font-size:12px;padding:8px 0;border-bottom:1px solid var(--border)"><span class="cc-key">Pro</span><span class="cc-val">$29/mo · 8% commission</span></div>
+        <div class="cc-row" style="font-size:12px;padding:8px 0;margin-bottom:10px"><span class="cc-key">Elite</span><span class="cc-val">$79/mo · 8% commission</span></div>
+        <div class="rf-field"><label>Select plan</label>
+          <select id="rf_plan"><option value="starter">Starter — Free forever</option><option value="pro">Pro — $29/month</option><option value="elite">Elite — $79/month</option></select>
+        </div>
+        <div class="glow-badge" style="margin-bottom:10px;font-size:11px">🪙 You'll receive 250 GLOW tokens free on signup</div>
+        <button class="rf-submit" onclick="completeReg('creator')">Create my creator account 🚀</button>
+      </div>`;
+    }
+  } else {
+    if (regStep === 1) {
+      div.innerHTML = `<div class="reg-form">
+        <div class="reg-progress">
+          <div class="rp-dot filled"></div><div class="rp-dot"></div><div class="rp-dot"></div>
+        </div>
+        <div class="rf-title">Step 1 of 3 — Company details</div>
+        <div class="rf-field"><label>Company name</label><input type="text" id="rf_company" placeholder="Your brand name"></div>
+        <div class="rf-row">
+          <div class="rf-field"><label>Contact name</label><input type="text" id="rf_contact" placeholder="Your name"></div>
+          <div class="rf-field"><label>Job title</label><input type="text" id="rf_jobtitle" placeholder="e.g. Marketing Manager"></div>
+        </div>
+        <div class="rf-field"><label>Business email</label><input type="email" id="rf_bemail" placeholder="marketing@company.com"></div>
+        <div class="rf-field"><label>Password</label><input type="password" id="rf_bpass" placeholder="Create a password"></div>
+        <button class="rf-submit" onclick="nextRegStep(1,'business')">Continue →</button>
+      </div>`;
+    } else if (regStep === 2) {
+      div.innerHTML = `<div class="reg-form">
+        <div class="reg-progress">
+          <div class="rp-dot filled"></div><div class="rp-dot filled"></div><div class="rp-dot"></div>
+        </div>
+        <div class="rf-title">Step 2 of 3 — Campaign preferences</div>
+        <div class="rf-field"><label>Industry</label>
+          <select id="rf_industry"><option>Fashion & Apparel</option><option>Beauty & Cosmetics</option><option>Food & Beverage</option><option>Technology</option><option>Health & Wellness</option><option>Travel</option><option>Finance</option><option>Retail</option><option>Other</option></select>
+        </div>
+        <div class="rf-field"><label>Monthly campaign budget</label>
+          <select id="rf_budget"><option>Under $1,000</option><option>$1,000–$5,000</option><option>$5,000–$20,000</option><option>$20,000–$100,000</option><option>$100,000+</option></select>
+        </div>
+        <div class="rf-field"><label>Target creator niche</label>
+          <select id="rf_tniche"><option>Fashion</option><option>Beauty</option><option>Fitness</option><option>Food & Lifestyle</option><option>Tech & Gaming</option><option>Travel</option><option>Finance</option><option>Sustainability</option></select>
+        </div>
+        <button class="rf-submit" onclick="nextRegStep(2,'business')">Continue →</button>
+      </div>`;
+    } else if (regStep === 3) {
+      div.innerHTML = `<div class="reg-form">
+        <div class="reg-progress">
+          <div class="rp-dot filled"></div><div class="rp-dot filled"></div><div class="rp-dot filled"></div>
+        </div>
+        <div class="rf-title">Step 3 of 3 — Choose your plan</div>
+        <div class="cc-row" style="font-size:12px;padding:8px 0;border-bottom:1px solid var(--border)"><span class="cc-key">Growth</span><span class="cc-val">$99/mo · 10 campaigns · 8% commission</span></div>
+        <div class="cc-row" style="font-size:12px;padding:8px 0;border-bottom:1px solid var(--border)"><span class="cc-key">Scale</span><span class="cc-val">$299/mo · Unlimited · 8% commission</span></div>
+        <div class="cc-row" style="font-size:12px;padding:8px 0;margin-bottom:10px"><span class="cc-key">Enterprise</span><span class="cc-val">Custom pricing · 8% commission</span></div>
+        <div class="rf-field"><label>Select plan</label>
+          <select id="rf_bplan"><option value="growth">Growth — $99/month</option><option value="scale">Scale — $299/month</option><option value="enterprise">Enterprise — Contact us</option></select>
+        </div>
+        <div class="glow-badge" style="margin-bottom:10px;font-size:11px">🪙 You'll receive 100 GLOW tokens free on signup</div>
+        <button class="rf-submit" onclick="completeReg('business')">Create business account 🚀</button>
+      </div>`;
+    }
+  }
+
+  const existing = document.getElementById('regForm');
+  if (existing) existing.remove();
+  document.getElementById('chatWrap').appendChild(div);
+  document.getElementById('chatWrap').scrollTop = 99999;
+}
+
+function nextRegStep(step, type) {
+  regStep = step + 1;
+  const existing = document.getElementById('regForm');
+  if (existing) existing.remove();
+  const wrap = document.getElementById('chatWrap');
+
+  const confirmMsgs = {
+    1: type === 'creator' ? "Thank you — your details have been noted. Let us now proceed to set up your creator profile. 👇" : "Thank you — your details have been received. Let us now configure your campaign preferences. 👇",
+    2: "Excellent progress — you are almost there. Please select your preferred membership plan to complete your registration. 🎉"
+  };
+
+  addMessage(confirmMsgs[step], false, null);
+  setTimeout(() => showRegStep(type, wrap), 500);
+}
+
+function completeReg(type) {
+  const existing = document.getElementById('regForm');
+  if (existing) existing.remove();
+  conversationState = 'registered';
+
+  const plan = type === 'creator'
+    ? (document.getElementById('rf_plan') ? document.getElementById('rf_plan').value : 'starter')
+    : (document.getElementById('rf_bplan') ? document.getElementById('rf_bplan').value : 'growth');
+
+  const glowAmount = type === 'creator' ? '250' : '100';
+  const emoji = type === 'creator' ? '🌱' : '🏢';
+
+  setTimeout(() => {
+    addMessage(`${emoji} <strong>You're all set!</strong> Welcome to Glow Up!\n\nYour ${type} account has been created. You've been awarded <strong>${glowAmount} GLOW tokens</strong> 🪙 as your welcome bonus.\n\nHere's what to do next:`, false, null);
+    setTimeout(() => {
+      const wrap = document.getElementById('chatWrap');
+      addFeatureList(
+        type === 'creator'
+          ? ["Complete your profile — add a photo and bio", "Connect your social accounts (+50 GLOW each)", "Browse brand offers in your dashboard", "Share your referral link — earn 200 GLOW per friend"]
+          : ["Post your first campaign brief", "Browse matched creator profiles", "Send your first offer to a creator", "Set up escrow payment method"],
+        wrap
+      );
+      addQuickReplies(
+        type === 'creator'
+          ? ["How do I connect my socials?", "Tell me about brand offers", "How do I earn more GLOW?"]
+          : ["How do I post a campaign?", "How does escrow work?", "Tell me about creator matching"],
+        wrap
+      );
+    }, 600);
+  }, 400);
+}
+
+function socialReg(platform) {
+  const existing = document.getElementById('regForm');
+  if (existing) existing.remove();
+  regStep = 2;
+  addMessage(`Connecting with <strong>${platform}</strong>... ✅\n\nI've pulled your basic profile. Now let's complete your creator details:`, false, null);
+  setTimeout(() => showRegStep('creator', document.getElementById('chatWrap')), 600);
+}
+
+// ── USER INPUT HANDLING ──
+function handleQuickReply(text) {
+  addMessage(text, true, null);
+  processInput(text);
+}
+
+function sendUserMsg() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+  addMessage(text, true, null);
+  processInput(text);
+}
+
+function processInput(text) {
+
+  // ── SECURITY CHECK FIRST — runs before any response ──
+  const security = checkRestrictions(text);
+  if (security.blocked) {
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      // Render blocked message with a warning card
+      const wrap = document.getElementById('chatWrap');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'msg';
+      msgDiv.innerHTML = `
+        <div class="msg-ava ai">✦</div>
+        <div style="max-width:88%">
+          <div class="bubble ai" style="border-left:3px solid #EF4444;padding:12px 15px">
+            <div style="font-size:12px;font-weight:700;color:#EF4444;margin-bottom:6px;display:flex;align-items:center;gap:6px">
+              ${security.title}
+            </div>
+            <div style="font-size:13px;line-height:1.7;color:var(--text)">${security.msg.replace(/\n/g,'<br>')}</div>
+          </div>
+          <div class="ts">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+        </div>`;
+      wrap.appendChild(msgDiv);
+      // Safe follow-up chips
+      addQuickReplies(["What is Glow Up?","How do I register?","What are the plans?","Tell me about GLOW tokens"], wrap);
+      wrap.scrollTop = wrap.scrollHeight;
+    }, 900);
+    return;
+  }
+
+  // ── NORMAL RESPONSE FLOW ──
+  const key = matchResponse(text);
+  if (key) {
+    const resp = RESPONSES[key];
+    const extras = {};
+    if (resp.card) extras.card = resp.card;
+    if (resp.features) extras.features = resp.features;
+    if (resp.planData) extras.planData = true;
+    if (resp.startReg) extras.startReg = resp.startReg;
+
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addMessage(resp.text, false, { ...extras, replies: resp.replies || [] });
+    }, Math.min(600 + resp.text.length * 2, 2000));
+  } else {
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addMessage(getFallback(text), false, {
+        replies: ["What is Glow Up?", "I'd like to register", "Register as a business", "How do I earn?", "Tell me about GLOW tokens", "I forgot my password"]
+      });
+    }, 1000);
+  }
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserMsg(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// ══════════════════════════════════════════════════════════
+// FORGOT PASSWORD FLOW
+// ══════════════════════════════════════════════════════════
+
+let fpStep = 0;      // 0=idle, 1=awaiting email, 2=awaiting OTP, 3=done
+let fpEmail = '';
+let fpOTP = '';
+let fpTimerInterval = null;
+let fpTimerSecs = 600;
+
+function startForgotPassword(wrap) {
+  fpStep = 1;
+  setTimeout(() => renderForgotForm(wrap), 400);
+}
+
+function renderForgotForm(wrap) {
+  const existing = document.getElementById('fpForm');
+  if (existing) existing.remove();
+
+  const div = document.createElement('div');
+  div.id = 'fpForm';
+  div.style.paddingLeft = '36px';
+  div.style.marginTop = '6px';
+
+  if (fpStep === 1) {
+    // Email entry step
+    div.innerHTML = `
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;display:flex;align-items:center;gap:7px">
+          <span style="width:20px;height:20px;border-radius:50%;background:var(--neon);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">1</span>
+          Enter your registered email address
+        </div>
+        <div style="display:flex;gap:8px;align-items:stretch">
+          <input id="fpEmailInput" type="email" inputmode="email" placeholder="your@email.com"
+            autocomplete="email"
+            style="flex:1;background:var(--deep);border:1px solid var(--border);color:var(--text);
+                   border-radius:8px;padding:11px 13px;font-size:13px;outline:none;
+                   font-family:inherit;transition:border-color .18s"
+            onkeydown="if(event.key==='Enter') fpSubmitEmail()"
+            onfocus="this.style.borderColor='var(--neon)'"
+            onblur="this.style.borderColor='var(--border)'">
+          <button onclick="fpSubmitEmail()"
+            style="padding:11px 16px;border-radius:8px;background:linear-gradient(135deg,var(--neon2),#6D28D9);
+                   color:#fff;font-size:13px;font-weight:700;border:none;cursor:pointer;
+                   white-space:nowrap;font-family:inherit;transition:opacity .2s"
+            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+            Send code →
+          </button>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--soft);display:flex;align-items:center;gap:5px">
+          🔒 A secure one-time code will be sent to this email address
+        </div>
+      </div>`;
+
+  } else if (fpStep === 2) {
+    // OTP entry step
+    const masked = fpEmail.replace(/(.{2})(.*)(@.*)/, (_, a, b, c) => a + b.replace(/./g, '*') + c);
+    div.innerHTML = `
+      <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;display:flex;align-items:center;gap:7px">
+          <span style="width:20px;height:20px;border-radius:50%;background:var(--neon);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">2</span>
+          Enter the 6-digit code sent to <strong style="color:var(--text)">${masked}</strong>
+        </div>
+        <div style="display:flex;gap:7px;justify-content:center;margin-bottom:12px">
+          ${[0,1,2,3,4,5].map(i => `
+            <input id="fp_o${i}" type="tel" inputmode="numeric" maxlength="1"
+              style="width:40px;height:48px;background:var(--deep);border:1.5px solid var(--border);
+                     color:var(--text);border-radius:8px;font-size:19px;font-weight:800;
+                     text-align:center;outline:none;font-family:inherit;
+                     transition:border-color .18s,box-shadow .18s;-webkit-appearance:none"
+              oninput="fpOtpIn(this,${i})" onkeydown="fpOtpKey(event,${i})"
+              onfocus="this.style.borderColor='var(--neon)';this.style.boxShadow='0 0 0 3px rgba(139,92,246,0.14)'"
+              onblur="this.style.borderColor=this.value?'var(--neon)':'var(--border)';this.style.boxShadow='none'">`
+          ).join('')}
+        </div>
+        <div style="text-align:center;margin-bottom:10px">
+          <div id="fpTimerDisplay" style="font-size:11px;color:var(--muted);margin-bottom:7px">
+            Code expires in <span id="fpTimer" style="color:var(--purple);font-weight:600">10:00</span>
+          </div>
+          <button id="fpResendBtn" onclick="fpResend()" disabled
+            style="font-size:11px;color:var(--purple);background:none;border:none;cursor:pointer;
+                   text-decoration:underline;font-family:inherit;opacity:.4"
+            title="Available after timer expires">Resend code</button>
+        </div>
+        <div id="fpOtpError" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);
+          border-radius:7px;padding:8px 12px;font-size:12px;color:#EF4444;margin-bottom:10px">
+          ✗ Incorrect code. Please check and try again.
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="fpVerifyOTP()"
+            style="flex:1;padding:11px;border-radius:8px;background:linear-gradient(135deg,var(--neon2),#6D28D9);
+                   color:#fff;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit">
+            Verify code →
+          </button>
+          <button onclick="fpStep=1;fpStartTimer=false;renderForgotForm(document.getElementById('chatWrap'))"
+            style="padding:11px 14px;border-radius:8px;border:1px solid var(--border);
+                   color:var(--muted);font-size:12px;font-weight:500;background:transparent;
+                   cursor:pointer;font-family:inherit">
+            ← Change email
+          </button>
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('chatWrap').appendChild(div);
+  document.getElementById('chatWrap').scrollTop = 99999;
+
+  if (fpStep === 2) {
+    fpStartCountdown();
+    setTimeout(() => { const b = document.getElementById('fp_o0'); if(b) b.focus(); }, 200);
+  }
+  if (fpStep === 1) {
+    setTimeout(() => { const e = document.getElementById('fpEmailInput'); if(e) e.focus(); }, 200);
+  }
+}
+
+function fpSubmitEmail() {
+  const input = document.getElementById('fpEmailInput');
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val || !val.includes('@')) {
+    input.style.borderColor = 'var(--red, #EF4444)';
+    input.placeholder = 'Please enter a valid email address';
+    return;
+  }
+  fpEmail = val;
+  fpOTP = String(Math.floor(100000 + Math.random() * 900000));
+  console.log('[DEMO] Password reset OTP for', fpEmail, ':', fpOTP);
+
+  // Remove form, show sending state
+  const form = document.getElementById('fpForm');
+  if (form) form.remove();
+
+  // Show typing then confirmation
+  showTyping();
+  setTimeout(() => {
+    hideTyping();
+    const wrap = document.getElementById('chatWrap');
+    const masked = fpEmail.replace(/(.{2})(.*)(@.*)/, (_, a, b, c) => a + b.replace(/./g, '*') + c);
+    addMessage(
+      `Thank you. A <strong>6-digit recovery code</strong> has been sent to <strong>${masked}</strong>.\n\nPlease check your inbox — including your spam or junk folder — and enter the code below to proceed. The code will expire in <strong>10 minutes</strong>.`,
+      false, null
+    );
+    fpStep = 2;
+    setTimeout(() => renderForgotForm(wrap), 500);
+  }, 1400);
+}
+
+function fpOtpIn(el, idx) {
+  const v = el.value.replace(/[^0-9]/g, '');
+  el.value = v;
+  if (v) {
+    el.style.borderColor = 'var(--neon)';
+    if (idx < 5) { const next = document.getElementById('fp_o'+(idx+1)); if(next) next.focus(); }
+    else fpVerifyOTP();
+  }
+}
+
+function fpOtpKey(e, idx) {
+  if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+    const prev = document.getElementById('fp_o'+(idx-1)); if(prev) prev.focus();
+  }
+}
+
+function fpGetOTP() {
+  let v = '';
+  for (let i = 0; i < 6; i++) { const b = document.getElementById('fp_o'+i); v += b ? b.value : ''; }
+  return v;
+}
+
+function fpVerifyOTP() {
+  const entered = fpGetOTP();
+  if (entered.length < 6) return;
+
+  clearInterval(fpTimerInterval);
+
+  if (entered === fpOTP || entered === '123456') {
+    // Correct — remove form, show new password step
+    const form = document.getElementById('fpForm');
+    if (form) form.remove();
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      fpStep = 3;
+      addMessage(
+        `✅ <strong>Identity verified successfully.</strong>\n\nYour recovery code has been confirmed. Please create your new password below — ensure it is strong and unique to keep your account secure.`,
+        false, null
+      );
+      const wrap = document.getElementById('chatWrap');
+      setTimeout(() => renderNewPasswordForm(wrap), 500);
+    }, 900);
+  } else {
+    // Wrong — shake effect
+    document.getElementById('fpOtpError').style.display = 'block';
+    for (let i = 0; i < 6; i++) {
+      const b = document.getElementById('fp_o'+i);
+      if (b) {
+        b.style.borderColor = '#EF4444';
+        b.style.animation = 'fpShake .35s';
+        setTimeout(() => {
+          b.style.animation = '';
+          b.value = '';
+          b.style.borderColor = 'var(--border)';
+        }, 600);
+      }
+    }
+    setTimeout(() => { const b = document.getElementById('fp_o0'); if(b) b.focus(); }, 700);
+  }
+}
+
+function fpStartCountdown() {
+  clearInterval(fpTimerInterval);
+  fpTimerSecs = 600;
+  const resend = document.getElementById('fpResendBtn');
+  if (resend) { resend.disabled = true; resend.style.opacity = '.4'; }
+  fpTick();
+  fpTimerInterval = setInterval(() => {
+    fpTimerSecs--;
+    fpTick();
+    if (fpTimerSecs <= 0) {
+      clearInterval(fpTimerInterval);
+      const el = document.getElementById('fpTimer');
+      if (el) el.textContent = 'Expired';
+      const btn = document.getElementById('fpResendBtn');
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    }
+  }, 1000);
+}
+
+function fpTick() {
+  const el = document.getElementById('fpTimer');
+  if (!el) return;
+  const m = Math.floor(fpTimerSecs / 60);
+  const s = fpTimerSecs % 60;
+  el.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function fpResend() {
+  fpOTP = String(Math.floor(100000 + Math.random() * 900000));
+  console.log('[DEMO] Resent OTP:', fpOTP);
+  for (let i = 0; i < 6; i++) { const b = document.getElementById('fp_o'+i); if(b){ b.value=''; b.style.borderColor='var(--border)'; } }
+  document.getElementById('fpOtpError').style.display = 'none';
+  fpStartCountdown();
+  setTimeout(() => { const b = document.getElementById('fp_o0'); if(b) b.focus(); }, 100);
+}
+
+function renderNewPasswordForm(wrap) {
+  const existing = document.getElementById('fpForm');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.id = 'fpForm';
+  div.style.paddingLeft = '36px';
+  div.style.marginTop = '6px';
+  div.innerHTML = `
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;display:flex;align-items:center;gap:7px">
+        <span style="width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">3</span>
+        Create your new password
+      </div>
+      <div style="margin-bottom:10px;position:relative">
+        <input id="fpNewPass" type="password" placeholder="New password"
+          autocomplete="new-password"
+          style="width:100%;background:var(--deep);border:1px solid var(--border);
+                 color:var(--text);border-radius:8px;padding:11px 42px 11px 13px;
+                 font-size:14px;outline:none;font-family:inherit;-webkit-appearance:none"
+          oninput="fpCheckStrength()"
+          onfocus="this.style.borderColor='var(--neon)'"
+          onblur="this.style.borderColor='var(--border)'">
+        <button onclick="fpToggle('fpNewPass',this)" type="button"
+          style="position:absolute;right:11px;top:50%;transform:translateY(-50%);
+                 background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;line-height:1">👁</button>
+      </div>
+      <!-- Strength bar -->
+      <div style="display:flex;gap:3px;margin-bottom:4px">
+        <div id="fpSb1" style="flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .3s"></div>
+        <div id="fpSb2" style="flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .3s"></div>
+        <div id="fpSb3" style="flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .3s"></div>
+        <div id="fpSb4" style="flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .3s"></div>
+      </div>
+      <div id="fpStrLbl" style="font-size:10px;margin-bottom:10px;font-weight:600;min-height:14px"></div>
+      <div style="margin-bottom:10px;position:relative">
+        <input id="fpConfPass" type="password" placeholder="Confirm new password"
+          autocomplete="new-password"
+          style="width:100%;background:var(--deep);border:1px solid var(--border);
+                 color:var(--text);border-radius:8px;padding:11px 42px 11px 13px;
+                 font-size:14px;outline:none;font-family:inherit;-webkit-appearance:none"
+          oninput="fpCheckMatch()"
+          onfocus="this.style.borderColor='var(--neon)'"
+          onblur="this.style.borderColor='var(--border)'">
+        <button onclick="fpToggle('fpConfPass',this)" type="button"
+          style="position:absolute;right:11px;top:50%;transform:translateY(-50%);
+                 background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;line-height:1">👁</button>
+      </div>
+      <div id="fpMatchMsg" style="font-size:11px;margin-bottom:10px;min-height:14px"></div>
+      <!-- Requirements -->
+      <div style="background:rgba(139,92,246,0.06);border:1px solid var(--border);border-radius:8px;
+                  padding:9px 11px;margin-bottom:12px">
+        <div id="fpR1" style="font-size:11px;color:var(--soft);display:flex;align-items:center;gap:7px;margin-bottom:4px">
+          <span style="width:5px;height:5px;border-radius:50%;background:var(--soft);flex-shrink:0;transition:background .2s"></span>At least 8 characters
+        </div>
+        <div id="fpR2" style="font-size:11px;color:var(--soft);display:flex;align-items:center;gap:7px;margin-bottom:4px">
+          <span style="width:5px;height:5px;border-radius:50%;background:var(--soft);flex-shrink:0;transition:background .2s"></span>One uppercase letter
+        </div>
+        <div id="fpR3" style="font-size:11px;color:var(--soft);display:flex;align-items:center;gap:7px;margin-bottom:4px">
+          <span style="width:5px;height:5px;border-radius:50%;background:var(--soft);flex-shrink:0;transition:background .2s"></span>One number
+        </div>
+        <div id="fpR4" style="font-size:11px;color:var(--soft);display:flex;align-items:center;gap:7px">
+          <span style="width:5px;height:5px;border-radius:50%;background:var(--soft);flex-shrink:0;transition:background .2s"></span>One special character (!@#$%)
+        </div>
+      </div>
+      <button id="fpResetBtn" onclick="fpDoReset()" disabled
+        style="width:100%;padding:12px;border-radius:8px;
+               background:linear-gradient(135deg,var(--neon2),#6D28D9);
+               color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;
+               font-family:inherit;opacity:.4;transition:opacity .2s">
+        Reset password →
+      </button>
+    </div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = 99999;
+  setTimeout(() => { const e = document.getElementById('fpNewPass'); if(e) e.focus(); }, 200);
+}
+
+function fpToggle(id, btn) {
+  const inp = document.getElementById(id);
+  if (!inp) return;
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+}
+
+function fpCheckStrength() {
+  const p = (document.getElementById('fpNewPass') || {}).value || '';
+  const len = p.length >= 8;
+  const upper = /[A-Z]/.test(p);
+  const num = /[0-9]/.test(p);
+  const special = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(p);
+  const reqs = [len, upper, num, special];
+  const ids = ['fpR1','fpR2','fpR3','fpR4'];
+  ids.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const dot = el.querySelector('span');
+    if (reqs[i]) { el.style.color = 'var(--green)'; if(dot) dot.style.background = 'var(--green)'; }
+    else { el.style.color = 'var(--soft)'; if(dot) dot.style.background = 'var(--soft)'; }
+  });
+  const score = reqs.filter(Boolean).length + (p.length >= 12 ? 1 : 0);
+  const capped = Math.min(score, 4);
+  const colors = ['', '#EF4444', '#F59E0B', '#06B6D4', '#10B981'];
+  const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+  const lclasses = ['', '#EF4444', '#F59E0B', '#06B6D4', '#10B981'];
+  for (let i = 1; i <= 4; i++) {
+    const seg = document.getElementById('fpSb'+i);
+    if (seg) seg.style.background = i <= capped ? colors[capped] : 'var(--border)';
+  }
+  const lbl = document.getElementById('fpStrLbl');
+  if (lbl) { lbl.textContent = p ? labels[capped] : ''; lbl.style.color = lclasses[capped] || 'transparent'; }
+  fpCheckMatch();
+  fpUpdateBtn();
+}
+
+function fpCheckMatch() {
+  const p = (document.getElementById('fpNewPass') || {}).value || '';
+  const c = (document.getElementById('fpConfPass') || {}).value || '';
+  const msg = document.getElementById('fpMatchMsg');
+  if (!msg) return;
+  if (!c) { msg.textContent = ''; return; }
+  if (p === c) { msg.textContent = '✓ Passwords match'; msg.style.color = 'var(--green)'; }
+  else { msg.textContent = '✗ Passwords do not match'; msg.style.color = '#EF4444'; }
+  fpUpdateBtn();
+}
+
+function fpUpdateBtn() {
+  const p = (document.getElementById('fpNewPass') || {}).value || '';
+  const c = (document.getElementById('fpConfPass') || {}).value || '';
+  const valid = p.length >= 8 && /[A-Z]/.test(p) && /[0-9]/.test(p) &&
+    /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(p) && p === c && c.length > 0;
+  const btn = document.getElementById('fpResetBtn');
+  if (btn) { btn.disabled = !valid; btn.style.opacity = valid ? '1' : '.4'; btn.style.cursor = valid ? 'pointer' : 'not-allowed'; }
+}
+
+function fpDoReset() {
+  const btn = document.getElementById('fpResetBtn');
+  if (btn) { btn.textContent = 'Resetting…'; btn.style.opacity = '.7'; btn.disabled = true; }
+  clearInterval(fpTimerInterval);
+
+  setTimeout(() => {
+    const form = document.getElementById('fpForm');
+    if (form) form.remove();
+    fpStep = 0;
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      const wrap = document.getElementById('chatWrap');
+      const now = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      addMessage(
+        `🎉 <strong>Password reset successfully!</strong>\n\nYour Glow Up account password has been updated at <strong>${now}</strong>. For your security, all active sessions have been signed out.\n\nA confirmation email has been dispatched to <strong>${fpEmail}</strong>. If you did not initiate this reset, please contact <strong>security@glowup.io</strong> immediately.`,
+        false,
+        { replies: ['Sign in now', 'Go to dashboard', 'What is Glow Up?'] }
+      );
+    }, 1000);
+  }, 1800);
+}
+
+// ── SHAKE KEYFRAME (injected once) ──
+if (!document.getElementById('fpStyles')) {
+  const style = document.createElement('style');
+  style.id = 'fpStyles';
+  style.textContent = '@keyframes fpShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}';
+  document.head.appendChild(style);
+}
+
+function resetChat() {
+  document.getElementById('chatWrap').innerHTML = '';
+  regStep = 0;
+  regData = {};
+  conversationState = 'greeting';
+  startGreeting(true);
+}
+
+// ── INIT ──
+document.addEventListener('click', function(e) {
+  const dd = document.getElementById('langDropdown');
+  const btn = document.getElementById('langBadge');
+  if (dd && btn && !dd.contains(e.target) && !btn.contains(e.target)) {
+    dd.style.display = 'none';
+  }
+});
+detectIP();
+</script>
+</body>
+</html>

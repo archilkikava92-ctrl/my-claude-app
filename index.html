@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Glow Up">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Join Glow Up — the creator-brand partnership platform. Free signup, zero followers needed. Earn from brand deals and GLOW tokens.">
+<meta property="og:title" content="Join Glow Up — Create. Collaborate. Earn.">
+<meta property="og:description" content="Free signup. Zero followers needed. Start earning from brand deals today.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Join Glow Up — Creator Platform">
+<title>Glow Up — Join Free</title>
+<style>
+/* ── RESET & BASE ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  background:#ffffff;color:#1a1040;min-height:100vh;
+  overflow-x:hidden;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;-webkit-appearance:none;appearance:none}
+button{cursor:pointer;border:none;background:none}
+
+/* ── CSS VARIABLES ── */
+:root{
+  --purple:#8B5CF6;--purple2:#7C3AED;--purple3:#6D28D9;
+  --pink:#EC4899;--pink2:#DB2777;
+  --cyan:#06B6D4;--green:#10B981;--gold:#F59E0B;
+  --red:#EF4444;
+  --card:#f8f6ff;--card2:#ede9ff;--deep:#f3f0ff;
+  --border:rgba(139,92,246,0.18);--border2:rgba(139,92,246,0.35);
+  --text:#1a1040;--muted:#9B95C9;--soft:#4A4670;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;--r-full:999px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+
+/* ── BACKGROUND ── */
+.bg{
+  position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(139,92,246,0.22) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 50% at 80% 80%,rgba(236,72,153,0.14) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 40% at 50% 50%,rgba(6,182,212,0.06) 0%,transparent 70%),
+             #ffffff;
+}
+.bg-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(139,92,246,0.04) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(139,92,246,0.04) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+/* ── PAGE WRAPPER ── */
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.logo{
+  font-size:22px;font-weight:800;letter-spacing:-0.5px;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.nav-right{display:flex;gap:8px;align-items:center}
+.btn-nav-ghost{
+  padding:8px 16px;border-radius:var(--r-full);
+  border:1px solid var(--border2);color:var(--muted);
+  font-size:13px;font-weight:500;transition:all .2s;
+}
+.btn-nav-ghost:hover{border-color:var(--purple);color:var(--purple)}
+.btn-nav-primary{
+  padding:8px 18px;border-radius:var(--r-full);
+  background:linear-gradient(135deg,var(--purple2),var(--purple3));
+  color:#fff;font-size:13px;font-weight:600;
+  transition:all .2s;
+}
+.btn-nav-primary:hover{opacity:.88;transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{padding:60px 20px 40px;text-align:center;max-width:680px;margin:0 auto}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);
+  border-radius:var(--r-full);padding:6px 16px;
+  font-size:12px;font-weight:600;color:var(--purple);
+  letter-spacing:0.4px;margin-bottom:24px;
+}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.hero h1{
+  font-size:clamp(34px,8vw,58px);font-weight:800;
+  letter-spacing:-2px;line-height:1.05;margin-bottom:18px;
+}
+.hero h1 span{
+  background:linear-gradient(135deg,var(--purple),var(--pink),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{font-size:clamp(14px,3.5vw,17px);color:var(--muted);line-height:1.7;max-width:480px;margin:0 auto 32px}
+.hero-free{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);
+  border-radius:var(--r-full);padding:5px 14px;
+  font-size:12px;font-weight:600;color:var(--green);margin-bottom:32px;
+}
+
+/* ── SOCIAL PROOF ── */
+.stats-row{
+  display:flex;justify-content:center;gap:0;
+  border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;margin-bottom:40px;
+}
+.stat-pill{
+  flex:1;text-align:center;padding:14px 12px;
+  border-right:1px solid var(--border);
+}
+.stat-pill:last-child{border-right:none}
+.stat-num{font-size:clamp(18px,4vw,24px);font-weight:800;color:var(--text);display:block}
+.stat-label{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap}
+
+/* ── TYPE SELECTOR ── */
+.type-selector{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;max-width:500px;margin:0 auto 40px;padding:0 20px;
+}
+.type-card{
+  border:1.5px solid var(--border);border-radius:var(--r-xl);
+  padding:20px 16px;text-align:center;cursor:pointer;
+  transition:all .25s;background:var(--card);
+  position:relative;overflow:hidden;
+}
+.type-card::before{
+  content:'';position:absolute;inset:0;opacity:0;
+  background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(236,72,153,0.06));
+  transition:opacity .25s;
+}
+.type-card:hover::before,.type-card.selected::before{opacity:1}
+.type-card.selected{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,0.15)}
+.type-icon{font-size:32px;margin-bottom:10px}
+.type-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.type-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.type-glow{
+  margin-top:10px;display:inline-flex;align-items:center;gap:4px;
+  background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.2);
+  border-radius:var(--r-full);padding:3px 10px;
+  font-size:11px;font-weight:600;color:var(--gold);
+}
+
+/* ── REGISTRATION CARD ── */
+.reg-section{padding:0 16px 60px;max-width:520px;margin:0 auto;width:100%}
+.reg-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-xl);overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.reg-card-header{
+  padding:24px 24px 20px;
+  border-bottom:1px solid var(--border);text-align:center;
+}
+.reg-card-header h2{font-size:20px;font-weight:800;margin-bottom:4px}
+.reg-card-header p{font-size:13px;color:var(--muted)}
+
+/* Progress */
+.progress-bar{
+  display:flex;gap:4px;padding:16px 24px 0;
+}
+.pb-seg{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .3s}
+.pb-seg.filled{background:linear-gradient(90deg,var(--purple),var(--pink))}
+
+.step-label{
+  padding:8px 24px 14px;
+  font-size:11px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.6px;
+}
+
+/* Form */
+.reg-body{padding:0 24px 24px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:400px){.form-row{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fg label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px}
+.fg input,.fg select,.fg textarea{
+  background:var(--deep);border:1px solid var(--border);
+  color:var(--text);border-radius:var(--r-md);
+  padding:12px 14px;font-size:14px;outline:none;
+  transition:border-color .18s,box-shadow .18s;width:100%;
+  -webkit-appearance:none;appearance:none;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  border-color:var(--purple);
+  box-shadow:0 0 0 3px rgba(139,92,246,0.15);
+}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--soft)}
+.fg select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239B95C9' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.fg select option{background:var(--deep);color:var(--text)}
+
+/* Social login */
+.social-section{margin-bottom:4px}
+.social-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.soc-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:var(--r-md);
+  border:1px solid var(--border);background:var(--deep);
+  color:var(--text);font-size:13px;font-weight:500;
+  transition:all .2s;width:100%;
+}
+.soc-btn:hover,.soc-btn:active{border-color:var(--purple);background:var(--card2)}
+.soc-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.soc-name{flex:1;text-align:left}
+.soc-arrow{font-size:14px;color:var(--soft)}
+
+.divider{
+  display:flex;align-items:center;gap:10px;
+  font-size:12px;color:var(--soft);margin:14px 0;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Plan selector */
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:380px){.plan-grid{grid-template-columns:1fr}}
+.plan-tile{
+  border:1.5px solid var(--border);border-radius:var(--r-md);
+  padding:12px 8px;text-align:center;cursor:pointer;
+  transition:all .2s;background:var(--deep);
+  position:relative;
+}
+.plan-tile.selected{border-color:var(--purple);background:rgba(139,92,246,0.08)}
+.plan-tile:active{transform:scale(.98)}
+.pt-name{font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px}
+.pt-price{font-size:18px;font-weight:800;color:var(--purple);line-height:1}
+.pt-per{font-size:10px;color:var(--muted)}
+.pt-glow{font-size:10px;color:var(--gold);margin-top:4px;font-weight:600}
+.pt-badge{
+  position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--purple2),var(--pink2));
+  color:#fff;font-size:9px;font-weight:700;
+  padding:2px 8px;border-radius:var(--r-full);white-space:nowrap;
+}
+
+/* Niche fields */
+.niche-fields{display:flex;flex-direction:column;gap:14px;margin-bottom:14px}
+.niche-field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--purple);margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.niche-field-label::after{content:'';flex:1;height:1px;background:rgba(139,92,246,0.15)}
+.niche-wrap{display:flex;flex-wrap:wrap;gap:6px}
+.niche-pill{
+  padding:5px 12px;border-radius:var(--r-full);
+  border:1px solid var(--border);color:var(--muted);
+  background:transparent;font-size:12px;font-weight:500;
+  cursor:pointer;transition:all .18s;
+}
+.niche-pill.active{border-color:var(--purple);color:var(--purple);background:rgba(139,92,246,0.1)}
+.niche-pill:active{transform:scale(.96)}
+
+/* Submit button */
+.btn-submit{
+  width:100%;padding:15px;border-radius:var(--r-md);
+  background:linear-gradient(135deg,var(--purple2),var(--pink2));
+  color:#fff;font-size:15px;font-weight:700;
+  transition:all .2s;border:none;cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.btn-submit::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.btn-submit:hover::before{opacity:1}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(139,92,246,0.4)}
+.btn-submit:active{transform:translateY(0);box-shadow:none}
+.btn-back{
+  width:100%;padding:12px;border-radius:var(--r-md);
+  border:1px solid var(--border);color:var(--muted);
+  font-size:14px;font-weight:500;margin-bottom:8px;
+  transition:all .2s;background:transparent;
+}
+.btn-back:hover{border-color:var(--purple);color:var(--purple)}
+
+/* Terms */
+.terms-note{
+  text-align:center;font-size:11px;color:var(--soft);
+  margin-top:12px;line-height:1.6;
+}
+.terms-note a{color:var(--purple);text-decoration:underline}
+
+/* ── SUCCESS SCREEN ── */
+.success-screen{
+  display:none;text-align:center;padding:40px 24px;
+}
+.success-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple2),var(--pink2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin:0 auto 20px;
+  animation:popIn .4s cubic-bezier(.17,.67,.35,1.2);
+}
+@keyframes popIn{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.success-screen h2{font-size:24px;font-weight:800;margin-bottom:8px}
+.success-screen p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:20px}
+.glow-earned{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.25);
+  border-radius:var(--r-lg);padding:14px 20px;margin-bottom:20px;
+}
+.ge-coin{font-size:28px}
+.ge-amount{font-size:22px;font-weight:800;color:var(--gold)}
+.ge-label{font-size:12px;color:var(--muted);margin-top:2px}
+.next-steps{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:16px;text-align:left;margin-bottom:20px;
+}
+.ns-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.ns-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid var(--border);
+  font-size:13px;color:var(--muted);
+}
+.ns-item:last-child{border:none;padding-bottom:0}
+.ns-check{
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(139,92,246,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:var(--purple);flex-shrink:0;
+}
+.btn-dashboard{
+  width:100%;padding:14px;border-radius:var(--r-md);
+  background:linear-gradient(135deg,var(--purple2),var(--pink2));
+  color:#fff;font-size:14px;font-weight:700;
+  transition:all .2s;
+}
+.btn-dashboard:hover{opacity:.9;transform:translateY(-1px)}
+
+/* ── FEATURES SECTION ── */
+.features{padding:40px 20px 60px;max-width:640px;margin:0 auto}
+.features-title{text-align:center;font-size:clamp(20px,5vw,28px);font-weight:800;margin-bottom:8px;letter-spacing:-0.5px}
+.features-sub{text-align:center;font-size:14px;color:var(--muted);margin-bottom:28px}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.feat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:18px 14px;
+  transition:border-color .2s;
+}
+.feat-card:hover{border-color:var(--border2)}
+.feat-emoji{font-size:24px;margin-bottom:10px}
+.feat-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.feat-desc{font-size:11px;color:var(--muted);line-height:1.55}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:24px 20px;
+  border-top:1px solid var(--border);
+  font-size:12px;color:var(--soft);line-height:1.8;
+}
+footer strong{color:var(--muted)}
+
+/* ── APP STORE BADGES ── */
+.app-badges{
+  display:flex;justify-content:center;gap:12px;
+  flex-wrap:wrap;padding:0 20px 40px;
+}
+.app-badge{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 18px;border-radius:var(--r-md);
+  border:1px solid var(--border);background:var(--card);
+  font-size:12px;font-weight:600;color:var(--text);
+  transition:all .2s;
+}
+.app-badge:hover{border-color:var(--purple)}
+.ab-icon{font-size:20px}
+.ab-text{text-align:left}
+.ab-sub{font-size:10px;color:var(--muted);font-weight:400;display:block}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  nav{padding:12px 16px}
+  .logo{font-size:20px}
+  .btn-nav-ghost{padding:7px 12px;font-size:12px}
+  .btn-nav-primary{padding:7px 14px;font-size:12px}
+  .hero{padding:40px 16px 32px}
+  .type-selector{padding:0 16px}
+  .reg-section{padding:0 12px 60px}
+  .reg-body{padding:0 18px 20px}
+  .reg-card-header{padding:20px 18px 16px}
+  .progress-bar{padding:14px 18px 0}
+  .step-label{padding:6px 18px 12px}
+  .plan-grid{grid-template-columns:1fr 1fr 1fr}
+  .feat-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:360px){
+  .plan-grid{grid-template-columns:1fr}
+  .stats-row{flex-direction:column}
+  .stat-pill{border-right:none;border-bottom:1px solid var(--border)}
+  .stat-pill:last-child{border-bottom:none}
+}
+
+/* ── ANIMATIONS ── */
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.animate-up{animation:slideUp .4s ease forwards}
+.delay-1{animation-delay:.1s;opacity:0}
+.delay-2{animation-delay:.2s;opacity:0}
+.delay-3{animation-delay:.3s;opacity:0}
+
+/* ── LOADING STATE ── */
+.btn-submit.loading{opacity:.7;pointer-events:none}
+.btn-submit.loading::after{
+  content:'';display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,.5);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;
+  margin-left:8px;vertical-align:-2px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="bg"><div class="bg-grid"></div></div>
+
+<div class="page">
+
+<!-- NAV -->
+<nav>
+  <div style="display:flex;align-items:baseline;gap:7px">
+    <div class="logo">Glow Up</div>
+    <span style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Influence</span>
+  </div>
+  <div class="nav-right">
+    <button class="btn-nav-ghost" onclick="window.location.href='forgot-password.html'">Sign in</button>
+    <button class="btn-nav-ghost" onclick="window.location.href='chatbot.html'" style="border-color:rgba(139,92,246,0.35)">✦ AI Assistant</button>
+    <button class="btn-nav-primary" onclick="scrollToReg()">Join free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero animate-up">
+  <div class="hero-badge"><span class="badge-dot"></span> Open to everyone · Zero followers needed</div>
+  <h1>Create.<br><span>Collaborate. Earn.</span></h1>
+  <p class="hero-sub">Glow Up connects creators and brands for authentic, paid partnerships. Sign up free — no follower count, no experience required.</p>
+  <div class="hero-free">✓ Always free to join &nbsp;·&nbsp; No credit card required</div>
+
+  <div class="stats-row animate-up delay-1">
+    <div class="stat-pill"><span class="stat-num">48K+</span><span class="stat-label">Active creators</span></div>
+    <div class="stat-pill"><span class="stat-num">9.2K</span><span class="stat-label">Brand partners</span></div>
+    <div class="stat-pill"><span class="stat-num">$4.2M</span><span class="stat-label">Deals closed</span></div>
+    <div class="stat-pill"><span class="stat-num">250</span><span class="stat-label">Free GLOW tokens</span></div>
+  </div>
+</div>
+
+<!-- ACCOUNT TYPE SELECTOR -->
+<div class="type-selector animate-up delay-2" id="typeSelector">
+  <div class="type-card selected" id="type-creator" onclick="selectType('creator')">
+    <div class="type-icon">🌱</div>
+    <div class="type-name">Creator</div>
+    <div class="type-desc">Influencer, content creator, or aspiring creator</div>
+    <div class="type-glow">🪙 250 GLOW free</div>
+  </div>
+  <div class="type-card" id="type-business" onclick="selectType('business')">
+    <div class="type-icon">🏢</div>
+    <div class="type-name">Business</div>
+    <div class="type-desc">Brand, company, or marketing team</div>
+    <div class="type-glow">🪙 100 GLOW free</div>
+  </div>
+</div>
+
+<!-- REGISTRATION CARD -->
+<div class="reg-section" id="regSection">
+  <div class="reg-card" id="regCard">
+
+    <div class="reg-card-header">
+      <h2 id="cardTitle">Create your creator account</h2>
+      <p id="cardSub">Free signup · Zero followers needed · 250 GLOW on joining</p>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-bar" id="progressBar">
+      <div class="pb-seg filled" id="seg1"></div>
+      <div class="pb-seg" id="seg2"></div>
+      <div class="pb-seg" id="seg3"></div>
+    </div>
+    <div class="step-label" id="stepLabel">Step 1 of 3 — Sign up method</div>
+
+    <!-- FORM STEPS -->
+    <div class="reg-body">
+
+      <!-- STEP 1: SIGN UP METHOD -->
+      <div id="step1">
+        <div class="social-section">
+          <div class="social-grid">
+            <button class="soc-btn" onclick="socialSignup('Instagram')">
+              <span class="soc-icon">📸</span><span class="soc-name">Continue with Instagram</span><span class="soc-arrow">→</span>
+            </button>
+            <button class="soc-btn" onclick="socialSignup('TikTok')">
+              <span class="soc-icon">🎵</span><span class="soc-name">Continue with TikTok</span><span class="soc-arrow">→</span>
+            </button>
+            <button class="soc-btn" onclick="socialSignup('YouTube')">
+              <span class="soc-icon">▶️</span><span class="soc-name">Continue with YouTube</span><span class="soc-arrow">→</span>
+            </button>
+            <button class="soc-btn" onclick="socialSignup('Twitter/X')">
+              <span class="soc-icon" style="font-size:14px;font-weight:900">𝕏</span><span class="soc-name">Continue with Twitter / X</span><span class="soc-arrow">→</span>
+            </button>
+            <button class="soc-btn" onclick="socialSignup('Snapchat')">
+              <span class="soc-icon">👻</span><span class="soc-name">Continue with Snapchat</span><span class="soc-arrow">→</span>
+            </button>
+            <button class="soc-btn" onclick="socialSignup('Twitch')">
+              <span class="soc-icon">🎮</span><span class="soc-name">Continue with Twitch</span><span class="soc-arrow">→</span>
+            </button>
+          </div>
+          <div class="divider">or use email</div>
+          <div class="form-row">
+            <div class="fg"><label>First name</label><input type="text" id="fname" placeholder="Alex" autocomplete="given-name"></div>
+            <div class="fg"><label>Last name</label><input type="text" id="lname" placeholder="Kim" autocomplete="family-name"></div>
+          </div>
+          <div class="fg"><label>Email address</label><input type="email" id="email" placeholder="alex@email.com" autocomplete="email" inputmode="email"></div>
+          <div class="fg"><label>Password</label><input type="password" id="password" placeholder="Create a strong password" autocomplete="new-password"></div>
+        </div>
+        <button class="btn-submit" onclick="goStep2()">Continue →</button>
+        <p class="terms-note" style="text-align:center;margin-top:10px">Already have an account? <a href="forgot-password.html" style="color:var(--purple);text-decoration:underline">Sign in / Forgot password</a></p>
+        <p class="terms-note">By joining you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. Your data is never sold.</p>
+      </div>
+
+      <!-- STEP 2: PROFILE DETAILS -->
+      <div id="step2" style="display:none">
+        <div id="creatorStep2">
+          <div class="fg">
+            <label>Primary platform</label>
+            <select id="platform">
+              <option value="">Select your main platform</option>
+              <option>Instagram</option><option>TikTok</option><option>YouTube</option>
+              <option>Twitter / X</option><option>LinkedIn</option><option>Twitch</option><option>Snapchat</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Current follower count</label>
+            <select id="followers">
+              <option value="0">0 — just starting out (welcome!)</option>
+              <option>1–100</option><option>100–1K</option><option>1K–10K</option>
+              <option>10K–100K</option><option>100K–1M</option><option>1M+</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Country</label>
+            <select id="country" autocomplete="country">
+              <option value="">Select country</option>
+              <option>United States</option><option>United Kingdom</option><option>Australia</option>
+              <option>Canada</option><option>South Africa</option><option>Nigeria</option>
+              <option>Kenya</option><option>Ghana</option><option>India</option>
+              <option>Germany</option><option>France</option><option>Brazil</option>
+              <option>Mexico</option><option>Philippines</option><option>Indonesia</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg"><label>Commercial fields of operation <span style="color:var(--soft);font-weight:400;text-transform:none;letter-spacing:0">(tap to select all that apply)</span></label>
+            <div class="niche-fields" id="niches">
+
+              <div class="niche-field">
+                <div class="niche-field-label">👗 Fashion &amp; Beauty</div>
+                <div class="niche-wrap">
+                  <button class="niche-pill" onclick="toggleNiche(this)">Fashion</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Luxury &amp; Designer</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Beauty &amp; Makeup</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Skincare</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Haircare</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Streetwear</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Sustainable Fashion</button>
+                </div>
+              </div>
+
+              <div class="niche-field">
+                <div class="niche-field-label">🎮 Tech &amp; Gaming</div>
+                <div class="niche-wrap">
+                  <button class="niche-pill" onclick="toggleNiche(this)">Consumer Tech</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Gaming</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Mobile Gaming</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Esports</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">AI &amp; Software</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Gadgets &amp; Reviews</button>
+                </div>
+              </div>
+
+              <div class="niche-field">
+                <div class="niche-field-label">💪 Fitness &amp; Sport</div>
+                <div class="niche-wrap">
+                  <button class="niche-pill" onclick="toggleNiche(this)">Fitness &amp; Gym</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Sports</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Outdoor &amp; Adventure</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Nutrition &amp; Supplements</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Yoga &amp; Mindfulness</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Martial Arts</button>
+                </div>
+              </div>
+
+              <div class="niche-field">
+                <div class="niche-field-label">🍽️ Food &amp; Travel</div>
+                <div class="niche-wrap">
+                  <button class="niche-pill" onclick="toggleNiche(this)">Food &amp; Cooking</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Restaurants &amp; Dining</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Travel &amp; Tourism</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Luxury Travel</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Budget Travel</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Food &amp; Beverage Brands</button>
+                </div>
+              </div>
+
+              <div class="niche-field">
+                <div class="niche-field-label">🌿 Lifestyle &amp; Wellness</div>
+                <div class="niche-wrap">
+                  <button class="niche-pill" onclick="toggleNiche(this)">Lifestyle</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Wellness &amp; Self-Care</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Mental Health</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Home &amp; Interior</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Parenting &amp; Family</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Sustainability</button>
+                </div>
+              </div>
+
+              <div class="niche-field">
+                <div class="niche-field-label">💼 Business &amp; Finance</div>
+                <div class="niche-wrap">
+                  <button class="niche-pill" onclick="toggleNiche(this)">Entrepreneurship</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Personal Finance</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Investing &amp; Crypto</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Marketing &amp; Branding</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Corporate &amp; B2B</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Real Estate</button>
+                </div>
+              </div>
+
+              <div class="niche-field">
+                <div class="niche-field-label">🎓 Education &amp; Coaching</div>
+                <div class="niche-wrap">
+                  <button class="niche-pill" onclick="toggleNiche(this)">Online Courses</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Life Coaching</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Career &amp; Skills</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Languages</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Kids &amp; Youth Education</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Science &amp; Knowledge</button>
+                </div>
+              </div>
+
+              <div class="niche-field">
+                <div class="niche-field-label">🎨 Art &amp; Design</div>
+                <div class="niche-wrap">
+                  <button class="niche-pill" onclick="toggleNiche(this)">Visual Art</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Graphic Design</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Photography</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Music &amp; Audio</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Film &amp; Video</button>
+                  <button class="niche-pill" onclick="toggleNiche(this)">Comedy &amp; Entertainment</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div id="businessStep2" style="display:none">
+          <div class="fg"><label>Company name</label><input type="text" id="company" placeholder="Your brand name" autocomplete="organization"></div>
+          <div class="form-row">
+            <div class="fg"><label>Industry</label>
+              <select id="industry">
+                <option value="">Select industry</option>
+                <option>Fashion & Apparel</option><option>Beauty & Cosmetics</option>
+                <option>Food & Beverage</option><option>Technology</option>
+                <option>Health & Wellness</option><option>Travel</option>
+                <option>Finance</option><option>Retail</option>
+                <option>Lifestyle & Wellness</option><option>Business & Finance</option>
+                <option>Education & Coaching</option><option>Art & Design</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="fg"><label>Monthly budget</label>
+              <select id="budget">
+                <option value="">Select range</option>
+                <option>Under $1,000</option><option>$1K–$5K</option>
+                <option>$5K–$20K</option><option>$20K–$100K</option><option>$100K+</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg"><label>Country</label>
+            <select id="bcountry" autocomplete="country">
+              <option value="">Select country</option>
+              <option>United States</option><option>United Kingdom</option><option>Australia</option>
+              <option>Canada</option><option>South Africa</option><option>Nigeria</option>
+              <option>India</option><option>Germany</option><option>France</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-submit" onclick="goStep3()">Continue →</button>
+        <button class="btn-back" onclick="goBack(1)">← Back</button>
+      </div>
+
+      <!-- STEP 3: CHOOSE PLAN -->
+      <div id="step3" style="display:none">
+        <div class="fg" style="margin-bottom:6px"><label>Choose your plan</label></div>
+        <div id="creatorPlans" class="plan-grid">
+          <div class="plan-tile selected" onclick="selectPlan(this,'starter')" id="plan-starter">
+            <div class="pt-name">Starter</div>
+            <div class="pt-price">Free</div>
+            <div class="pt-per">forever</div>
+            <div class="pt-glow">5 matches/mo</div>
+          </div>
+          <div class="plan-tile" onclick="selectPlan(this,'pro')" id="plan-pro">
+            <div class="pt-badge">Popular</div>
+            <div class="pt-name">Pro</div>
+            <div class="pt-price">$29</div>
+            <div class="pt-per">/month</div>
+            <div class="pt-glow">Unlimited</div>
+          </div>
+          <div class="plan-tile" onclick="selectPlan(this,'elite')" id="plan-elite">
+            <div class="pt-name">Elite</div>
+            <div class="pt-price">$79</div>
+            <div class="pt-per">/month</div>
+            <div class="pt-glow">Priority</div>
+          </div>
+        </div>
+        <div id="businessPlans" class="plan-grid" style="display:none">
+          <div class="plan-tile selected" onclick="selectPlan(this,'growth')" id="plan-growth">
+            <div class="pt-name">Growth</div>
+            <div class="pt-price">$99</div>
+            <div class="pt-per">/month</div>
+            <div class="pt-glow">10 campaigns</div>
+          </div>
+          <div class="plan-tile" onclick="selectPlan(this,'scale')" id="plan-scale">
+            <div class="pt-badge">Best value</div>
+            <div class="pt-name">Scale</div>
+            <div class="pt-price">$299</div>
+            <div class="pt-per">/month</div>
+            <div class="pt-glow">Unlimited</div>
+          </div>
+          <div class="plan-tile" onclick="selectPlan(this,'enterprise')" id="plan-enterprise">
+            <div class="pt-name">Enterprise</div>
+            <div class="pt-price" style="font-size:14px">Custom</div>
+            <div class="pt-per">&nbsp;</div>
+            <div class="pt-glow">White-glove</div>
+          </div>
+        </div>
+        <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:var(--r-md);padding:11px 14px;font-size:12px;color:#D97706;margin-bottom:14px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">🪙</span>
+          <span id="glowBonus">You'll receive <strong>250 GLOW tokens</strong> free on account creation.</span>
+        </div>
+        <button class="btn-submit" id="submitBtn" onclick="completeRegistration()">Create my account 🚀</button>
+        <button class="btn-back" onclick="goBack(2)">← Back</button>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">🎉</div>
+        <h2>You're in!</h2>
+        <p id="successMsg">Welcome to Glow Up! Your account is ready. You've earned your free GLOW tokens — start building your profile and getting matched with brands.</p>
+        <div class="glow-earned">
+          <div class="ge-coin">🪙</div>
+          <div>
+            <div class="ge-amount" id="glowAmount">250 GLOW</div>
+            <div class="ge-label">credited to your account</div>
+          </div>
+        </div>
+        <div class="next-steps">
+          <div class="ns-title">What to do next</div>
+          <div class="ns-item"><div class="ns-check">1</div><span id="ns1">Add a profile photo (+50 GLOW)</span></div>
+          <div class="ns-item"><div class="ns-check">2</div><span id="ns2">Connect your social accounts (+50 GLOW each)</span></div>
+          <div class="ns-item"><div class="ns-check">3</div><span id="ns3">Browse brand offers in your dashboard</span></div>
+          <div class="ns-item"><div class="ns-check">4</div><span>Refer a friend — earn 200 GLOW per signup</span></div>
+        </div>
+        <button class="btn-dashboard" onclick="window.location.href='dashboard.html'">Go to my dashboard →</button>
+      </div>
+
+    </div><!-- /reg-body -->
+  </div><!-- /reg-card -->
+</div><!-- /reg-section -->
+
+<!-- FEATURES -->
+<div class="features animate-up delay-3">
+  <div class="features-title">Everything you need</div>
+  <div class="features-sub">Built for creators at every level — from zero to verified pro</div>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-emoji">🎯</div><div class="feat-name">AI matching</div><div class="feat-desc">Smart brand-creator pairing based on niche, audience, and goals</div></div>
+    <div class="feat-card"><div class="feat-emoji">💼</div><div class="feat-name">Offer inbox</div><div class="feat-desc">Accept or decline brand deals — always on your terms</div></div>
+    <div class="feat-card"><div class="feat-emoji">📋</div><div class="feat-name">Digital contracts</div><div class="feat-desc">Every campaign protected by a legally binding 3-party agreement</div></div>
+    <div class="feat-card"><div class="feat-emoji">💰</div><div class="feat-name">Secure payments</div><div class="feat-desc">Escrow-protected. Paid by card, crypto, or GLOW tokens</div></div>
+    <div class="feat-card"><div class="feat-emoji">🪙</div><div class="feat-name">GLOW tokens</div><div class="feat-desc">Earn rewards for every action — campaigns, referrals, milestones</div></div>
+    <div class="feat-card"><div class="feat-emoji">📈</div><div class="feat-name">Growth path</div><div class="feat-desc">4 tiers: Aspiring → Rising → Creator → Verified Pro</div></div>
+  </div>
+</div>
+
+<!-- APP STORE BADGES -->
+<div class="app-badges">
+  <div class="app-badge">
+    <span class="ab-icon">🍎</span>
+    <div class="ab-text"><span class="ab-sub">Download on the</span>App Store</div>
+  </div>
+  <div class="app-badge">
+    <span class="ab-icon">▶</span>
+    <div class="ab-text"><span class="ab-sub">Get it on</span>Google Play</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Glow Up Platform</strong><br>
+  © 2025 Glow Up Platform Ltd. All rights reserved. Design copyright protected.<br>
+  Commission: 8% from creator + 8% from business = 16% total · glowup.io<br>
+  <a href="#" style="color:var(--purple)">Privacy Policy</a> &nbsp;·&nbsp;
+  <a href="#" style="color:var(--purple)">Terms of Service</a> &nbsp;·&nbsp;
+  <a href="#" style="color:var(--purple)">Support</a>
+</footer>
+
+</div><!-- /page -->
+
+<script>
+var currentType = 'creator';
+var currentStep = 1;
+var selectedPlan = 'starter';
+
+function selectType(type) {
+  currentType = type;
+  document.getElementById('type-creator').classList.toggle('selected', type === 'creator');
+  document.getElementById('type-business').classList.toggle('selected', type === 'business');
+
+  if (type === 'creator') {
+    document.getElementById('cardTitle').textContent = 'Create your creator account';
+    document.getElementById('cardSub').textContent = 'Free signup · Zero followers needed · 250 GLOW on joining';
+    document.getElementById('glowBonus').innerHTML = 'You\'ll receive <strong>250 GLOW tokens</strong> free on account creation.';
+  } else {
+    document.getElementById('cardTitle').textContent = 'Create your business account';
+    document.getElementById('cardSub').textContent = 'Find creators, run campaigns · 100 GLOW on joining';
+    document.getElementById('glowBonus').innerHTML = 'You\'ll receive <strong>100 GLOW tokens</strong> free on account creation.';
+  }
+  scrollToReg();
+}
+
+function scrollToReg() {
+  document.getElementById('regSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function goStep2() {
+  var fname = document.getElementById('fname').value.trim();
+  var email = document.getElementById('email').value.trim();
+  if (fname === '' || email === '') {
+    alert('Please fill in your name and email to continue.');
+    return;
+  }
+  showStep(2);
+}
+
+function goStep3() {
+  showStep(3);
+  if (currentType === 'creator') {
+    document.getElementById('creatorPlans').style.display = 'grid';
+    document.getElementById('businessPlans').style.display = 'none';
+  } else {
+    document.getElementById('creatorPlans').style.display = 'none';
+    document.getElementById('businessPlans').style.display = 'grid';
+  }
+}
+
+function goBack(toStep) {
+  showStep(toStep);
+}
+
+function showStep(n) {
+  currentStep = n;
+  document.getElementById('step1').style.display = n === 1 ? 'block' : 'none';
+  document.getElementById('step2').style.display = n === 2 ? 'block' : 'none';
+  document.getElementById('step3').style.display = n === 3 ? 'block' : 'none';
+
+  if (n === 2) {
+    document.getElementById('creatorStep2').style.display = currentType === 'creator' ? 'block' : 'none';
+    document.getElementById('businessStep2').style.display = currentType === 'business' ? 'block' : 'none';
+  }
+
+  var segs = ['seg1','seg2','seg3'];
+  segs.forEach(function(id, i) {
+    document.getElementById(id).classList.toggle('filled', i < n);
+  });
+
+  var labels = {
+    1: 'Step 1 of 3 — Sign up method',
+    2: 'Step 2 of 3 — Your profile',
+    3: 'Step 3 of 3 — Choose plan'
+  };
+  document.getElementById('stepLabel').textContent = labels[n] || '';
+  document.getElementById('regCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function selectPlan(el, plan) {
+  selectedPlan = plan;
+  var container = el.closest('.plan-grid');
+  container.querySelectorAll('.plan-tile').forEach(function(t) { t.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function toggleNiche(btn) {
+  btn.classList.toggle('active');
+}
+
+function socialSignup(platform) {
+  document.getElementById('fname').value = 'Social';
+  document.getElementById('lname').value = 'User';
+  document.getElementById('email').value = platform.toLowerCase() + '_user@glowup.io';
+  goStep2();
+}
+
+function completeRegistration() {
+  var btn = document.getElementById('submitBtn');
+  btn.classList.add('loading');
+  btn.textContent = 'Creating account';
+
+  setTimeout(function() {
+    btn.classList.remove('loading');
+    var glowAmt = currentType === 'creator' ? '250 GLOW' : '100 GLOW';
+    document.getElementById('glowAmount').textContent = glowAmt;
+
+    if (currentType === 'business') {
+      document.getElementById('successMsg').textContent = 'Welcome to Glow Up! Your business account is live. You\'ve received your free GLOW tokens — start browsing creators and launching your first campaign.';
+      document.getElementById('ns1').textContent = 'Complete your company profile';
+      document.getElementById('ns2').textContent = 'Browse matched creator profiles';
+      document.getElementById('ns3').textContent = 'Post your first campaign brief';
+    }
+
+    document.getElementById('step3').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    document.getElementById('progressBar').querySelectorAll('.pb-seg').forEach(function(s) { s.classList.add('filled'); });
+    document.getElementById('stepLabel').textContent = 'Account created successfully!';
+    document.getElementById('regCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1600);
+}
+
+function resetForm() {
+  currentStep = 1;
+  showStep(1);
+  document.getElementById('successScreen').style.display = 'none';
+  document.getElementById('step1').style.display = 'block';
+}
+</script>
+</body>
+</html>
